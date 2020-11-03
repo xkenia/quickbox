@@ -87,7 +87,7 @@ static Event::EventPlugin* eventPlugin()
 static qf::qmlwidgets::framework::Plugin *receiptsPlugin()
 {
 	qf::qmlwidgets::framework::MainWindow *fwk = qf::qmlwidgets::framework::MainWindow::frameWork();
-	auto plugin = qobject_cast<qf::qmlwidgets::framework::Plugin *>(fwk->plugin("Receipts"));
+	auto plugin = qobject_cast<qf::qmlwidgets::framework::Plugin*>(fwk->plugin("Receipts"));
 	QF_ASSERT(plugin != nullptr, "Bad Receipts plugin", return nullptr);
 	return plugin;
 }
@@ -278,7 +278,7 @@ void CardReaderWidget::onCustomContextMenuRequest(const QPoint & pos)
 			fwk->showProgress(tr("Recalculating times for %1").arg(row.value(QStringLiteral("competitorName")).toString()), ++curr_ix, sel_ixs.count());
 			try {
 				qf::core::sql::Transaction transaction;
-				this_plugin->reloadTimesFromCard(card_id, run_id);
+				this_plugin->reloadTimesFromCard(card_id, run_id, false);
 				ui->tblCards->reloadRow(ix);
 				transaction.commit();
 			}
@@ -298,7 +298,7 @@ CardReaderWidget::~CardReaderWidget()
 void CardReaderWidget::settleDownInPartWidget(CardReaderPartWidget *part_widget)
 {
 	connect(part_widget, SIGNAL(resetPartRequest()), this, SLOT(reset()));
-	connect(part_widget, SIGNAL(reloadPartRequest()), this, SLOT(reset()));
+	connect(part_widget, SIGNAL(reloadPartRequest()), this, SLOT(reload()));
 	{
 		qfw::Action *a_station = part_widget->menuBar()->actionForPath("station", true);
 		a_station->setText(tr("&Station"));
@@ -583,7 +583,7 @@ void CardReaderWidget::onOpenCommTriggered(bool checked)
 		//theApp()->scriptDriver()->callExtensionFunction("onCommConnect", QVariantList() << device);
 	}
 	else {
-		commPort()->close();
+		commPort()->closeComm();
 	}
 }
 
@@ -804,15 +804,36 @@ void CardReaderWidget::assignRunnerToSelectedCard()
 	dlg.setCentralWidget(w);
 	//w->setFocusToWidget(Runs::FindRunnerWidget::FocusWidget::Name);
 	w->focusLineEdit();
-	connect(w, &Runs::FindRunnerWidget::runnerSelected, [this, card_id, &dlg](const QVariantMap &values) {
-		dlg.accept();
+	if(dlg.exec()) {
+		QVariantMap values = w->selectedRunner();
+		qfDebug() << values;
 		int run_id = values.value("runid").toInt();
-		if(run_id) {
+		int si_id = thisPlugin()->cardIdToSiId(card_id);
+		if(run_id > 0 && si_id > 0) {
 			thisPlugin()->assignCardToRun(card_id, run_id);
+			qf::core::sql::QueryBuilder qb;
+			qb.select("stageId").from("runs").where("id=" QF_IARG(run_id) );
+			qfDebug() << qb.toString();
+			qf::core::sql::Query q;
+			q.execThrow(qb.toString());
+			if(q.next()) {
+				int competitor_id = values.value("competitorid").toInt();
+				int stage_id = q.value("stageId").toInt();
+				QString qs = "UPDATE runs SET siId=" QF_IARG(si_id) " WHERE competitorId=" QF_IARG(competitor_id) " AND stageId=" QF_IARG(stage_id);
+				if(values.value(Runs::FindRunnerWidget::UseSIInNextStages).toBool()) {
+					QString qs = "UPDATE runs SET siId=" QF_IARG(si_id) " WHERE competitorId=" QF_IARG(competitor_id) " AND stageId>=" QF_IARG(stage_id);
+				}
+				qfDebug() << qs;
+				q.execThrow(qs);
+			}
 			this->ui->tblCards->reloadRow();
+
+			auto receipts_plugin = receiptsPlugin();
+			if(receipts_plugin)
+				QMetaObject::invokeMethod(receipts_plugin, "printOnAutoPrintEnabled", Q_ARG(int, card_id));
+
 		}
-	});
-	dlg.exec();
+	}
 }
 
 quickevent::gui::audio::Player *CardReaderWidget::audioPlayer()

@@ -74,71 +74,71 @@
 <context>
     <name>LegsModel</name>
     <message>
-        <location filename="src/relaywidget.cpp" line="79"/>
+        <location filename="src/relaywidget.cpp" line="68"/>
         <source>Leg</source>
         <comment>relays.leg</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="79"/>
+        <location filename="src/relaywidget.cpp" line="68"/>
         <source>Leg</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="80"/>
+        <location filename="src/relaywidget.cpp" line="69"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="81"/>
+        <location filename="src/relaywidget.cpp" line="70"/>
         <source>Reg</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="82"/>
+        <location filename="src/relaywidget.cpp" line="71"/>
         <source>SI</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="83"/>
+        <location filename="src/relaywidget.cpp" line="72"/>
         <source>Start</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="84"/>
+        <location filename="src/relaywidget.cpp" line="73"/>
         <source>Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="85"/>
+        <location filename="src/relaywidget.cpp" line="74"/>
         <source>NC</source>
         <comment>runs.notCompeting</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="85"/>
+        <location filename="src/relaywidget.cpp" line="74"/>
         <source>Not competing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="86"/>
+        <location filename="src/relaywidget.cpp" line="75"/>
         <source>D</source>
         <comment>runs.disqualified</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="86"/>
+        <location filename="src/relaywidget.cpp" line="75"/>
         <source>Disqualified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="87"/>
+        <location filename="src/relaywidget.cpp" line="76"/>
         <source>E</source>
         <comment>runs.misPunch</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="87"/>
+        <location filename="src/relaywidget.cpp" line="76"/>
         <source>Card mispunch</source>
         <translation type="unfinished"></translation>
     </message>
@@ -152,7 +152,7 @@
     </message>
     <message>
         <location filename="src/relaywidget.ui" line="35"/>
-        <location filename="src/relaywidget.cpp" line="126"/>
+        <location filename="src/relaywidget.cpp" line="115"/>
         <source>Relay</source>
         <translation type="unfinished"></translation>
     </message>
@@ -237,17 +237,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="184"/>
+        <location filename="src/relaywidget.cpp" line="173"/>
         <source>Class should be entered.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="188"/>
+        <location filename="src/relaywidget.cpp" line="177"/>
         <source>Relay ID invalid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relaywidget.cpp" line="233"/>
+        <location filename="src/relaywidget.cpp" line="220"/>
         <source>Add leg</source>
         <translation type="unfinished"></translation>
     </message>
@@ -255,7 +255,7 @@
 <context>
     <name>Relays::RelaysPlugin</name>
     <message>
-        <location filename="src/relaysplugin.cpp" line="66"/>
+        <location filename="src/relaysplugin.cpp" line="74"/>
         <source>Edit Relay</source>
         <translation type="unfinished"></translation>
     </message>
@@ -268,133 +268,175 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="91"/>
+        <location filename="src/relayswidget.cpp" line="106"/>
         <source>Class</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="92"/>
+        <location filename="src/relayswidget.cpp" line="107"/>
         <source>Club</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="93"/>
+        <location filename="src/relayswidget.cpp" line="108"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="94"/>
+        <location filename="src/relayswidget.cpp" line="109"/>
         <source>Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="95"/>
+        <location filename="src/relayswidget.cpp" line="110"/>
         <source>Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="121"/>
+        <location filename="src/relayswidget.cpp" line="136"/>
         <source>&amp;Class </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="148"/>
+        <location filename="src/relayswidget.cpp" line="163"/>
         <source>&amp;Relays</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="150"/>
+        <location filename="src/relayswidget.cpp" line="165"/>
         <source>&amp;Assign numbers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="156"/>
+        <location filename="src/relayswidget.cpp" line="171"/>
         <source>&amp;Print</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="158"/>
+        <location filename="src/relayswidget.cpp" line="173"/>
         <source>&amp;Start list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="159"/>
+        <location filename="src/relayswidget.cpp" line="174"/>
         <source>&amp;Classes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="162"/>
+        <location filename="src/relayswidget.cpp" line="177"/>
         <source>C&amp;lubs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="166"/>
+        <location filename="src/relayswidget.cpp" line="181"/>
+        <location filename="src/relayswidget.cpp" line="200"/>
         <source>&amp;Results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="168"/>
+        <location filename="src/relayswidget.cpp" line="183"/>
         <source>&amp;After n legs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="173"/>
+        <location filename="src/relayswidget.cpp" line="188"/>
         <source>&amp;Overall</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="192"/>
+        <location filename="src/relayswidget.cpp" line="193"/>
+        <source>Overall condensed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/relayswidget.cpp" line="199"/>
+        <source>E&amp;xport</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/relayswidget.cpp" line="202"/>
+        <source>IOF-XML 3.0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/relayswidget.cpp" line="221"/>
         <source>--- all ---</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="219"/>
+        <location filename="src/relayswidget.cpp" line="250"/>
         <source>Edit Relay</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="222"/>
+        <location filename="src/relayswidget.cpp" line="253"/>
         <source>Save and &amp;next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="250"/>
-        <source>Really delete all the selected competitors? This action cannot be reverted.</source>
+        <location filename="src/relayswidget.cpp" line="285"/>
+        <source>Really delete all the selected relays? This action cannot be reverted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="263"/>
+        <location filename="src/relayswidget.cpp" line="550"/>
+        <location filename="src/relayswidget.cpp" line="574"/>
+        <location filename="src/relayswidget.cpp" line="598"/>
+        <source>Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/relayswidget.cpp" line="614"/>
+        <source>Save as %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/relayswidget.cpp" line="635"/>
+        <source>Exporting result file...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/relayswidget.cpp" line="635"/>
+        <source>Abort</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/relayswidget.cpp" line="821"/>
+        <source>Relays IOF-XML 3.0 results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/relayswidget.cpp" line="298"/>
         <source>Confirm deletion of %1 relays.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="283"/>
+        <location filename="src/relayswidget.cpp" line="318"/>
         <source>Dialog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="283"/>
+        <location filename="src/relayswidget.cpp" line="318"/>
         <source>Assign relay numbers method</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="284"/>
+        <location filename="src/relayswidget.cpp" line="319"/>
         <source>Random number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="284"/>
+        <location filename="src/relayswidget.cpp" line="319"/>
         <source>In alphabetical order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="468"/>
+        <location filename="src/relayswidget.cpp" line="503"/>
         <source>Start list by classes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/relayswidget.cpp" line="487"/>
-        <location filename="src/relayswidget.cpp" line="526"/>
+        <location filename="src/relayswidget.cpp" line="522"/>
         <source>Start list by clubs</source>
         <translation type="unfinished"></translation>
     </message>
@@ -426,6 +468,29 @@
     </message>
     <message>
         <location filename="qml/reports/results.qml" line="23"/>
+        <source>---</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>results_condensed</name>
+    <message>
+        <location filename="qml/reports/results_condensed.qml" line="9"/>
+        <source>Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qml/reports/results_condensed.qml" line="19"/>
+        <source>DISQ</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qml/reports/results_condensed.qml" line="21"/>
+        <source>NC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qml/reports/results_condensed.qml" line="23"/>
         <source>---</source>
         <translation type="unfinished"></translation>
     </message>

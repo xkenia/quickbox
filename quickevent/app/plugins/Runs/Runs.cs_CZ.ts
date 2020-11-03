@@ -180,7 +180,7 @@
         <translation>Možnosti</translation>
     </message>
     <message>
-        <location filename="src/eventstatisticswidget.cpp" line="578"/>
+        <location filename="src/eventstatisticswidget.cpp" line="585"/>
         <source>Results by classes</source>
         <oldsource>Results by clases</oldsource>
         <translation>Výsledky po kategoriích</translation>
@@ -221,6 +221,11 @@
         <source>Name, registration, SI</source>
         <translation>Jméno, registrace, SI</translation>
     </message>
+    <message>
+        <location filename="src/findrunnerwidget.ui" line="30"/>
+        <source>Use this SI card also in next stages</source>
+        <translation>Použít toto číslo čipu i v následujících etapách</translation>
+    </message>
 </context>
 <context>
     <name>Runs::NStagesReportOptionsDialog</name>
@@ -253,196 +258,209 @@
 <context>
     <name>Runs::RunsPlugin</name>
     <message>
-        <location filename="src/runsplugin.cpp" line="153"/>
+        <location filename="src/runsplugin.cpp" line="143"/>
         <source>Event statistics</source>
         <translation>Statistiky závodu</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="935"/>
-        <location filename="src/runsplugin.cpp" line="2120"/>
+        <location filename="src/runsplugin.cpp" line="932"/>
+        <location filename="src/runsplugin.cpp" line="2136"/>
         <source>E%1 IOF XML stage results</source>
         <translation>E%1 IOF XML etapové výsledky</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1343"/>
-        <location filename="src/runsplugin.cpp" line="1699"/>
+        <location filename="src/runsplugin.cpp" line="1355"/>
+        <location filename="src/runsplugin.cpp" line="1713"/>
         <source>Start list by classes</source>
         <translation>Startovní listina po kategoriích</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1368"/>
-        <location filename="src/runsplugin.cpp" line="1788"/>
+        <location filename="src/runsplugin.cpp" line="1381"/>
+        <location filename="src/runsplugin.cpp" line="1802"/>
         <source>Start list by clubs</source>
         <translation>Startovní listina po klubech</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1392"/>
+        <location filename="src/runsplugin.cpp" line="1406"/>
         <source>Start list for starters</source>
         <translation>Startovní listina pro startéry</translation>
     </message>
-    <message>
-        <location filename="src/runsplugin.cpp" line="1425"/>
-        <source>Start list by classes after %1 stages</source>
-        <translation>Startovní listina po kategoriích (%1 etapy)</translation>
+    <message numerus="yes">
+        <location filename="src/runsplugin.cpp" line="1439"/>
+        <source>Start list by classes for %n stage(s)</source>
+        <translation>
+            <numerusform>Startovní listina po kategoriích na %n etapu</numerusform>
+            <numerusform>Startovní listina po kategoriích na %n etapy</numerusform>
+            <numerusform>Startovní listina po kategoriích na %n etap</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="src/runsplugin.cpp" line="1473"/>
+        <source>Start list by clubs for %n stage(s)</source>
+        <translation>
+            <numerusform>Startovní listina po klubech na %n etapu</numerusform>
+            <numerusform>Startovní listina po klubech na %n etapy</numerusform>
+            <numerusform>Startovní listina po klubech na %n etap</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1459"/>
-        <source>Start list by clubs after %1 stages</source>
-        <translation>Startovní listina po klubech (%1 etapy)</translation>
-    </message>
-    <message>
-        <location filename="src/runsplugin.cpp" line="1483"/>
-        <location filename="src/runsplugin.cpp" line="1509"/>
+        <location filename="src/runsplugin.cpp" line="1497"/>
+        <location filename="src/runsplugin.cpp" line="1523"/>
         <source>Results by classes</source>
         <translation>Výsledky po kategoriích</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1533"/>
+        <location filename="src/runsplugin.cpp" line="1547"/>
         <source>Stage awards</source>
         <translation>Etapové diplomy</translation>
     </message>
-    <message>
-        <location filename="src/runsplugin.cpp" line="1561"/>
-        <location filename="src/runsplugin.cpp" line="1588"/>
-        <source>Results after %1 stages</source>
-        <translation>Výsledky po %1 etapách</translation>
+    <message numerus="yes">
+        <location filename="src/runsplugin.cpp" line="1575"/>
+        <location filename="src/runsplugin.cpp" line="1602"/>
+        <source>Results after %n stage(s)</source>
+        <oldsource>Results after %1 stages</oldsource>
+        <translation>
+            <numerusform>Výsledky po %n etapě</numerusform>
+            <numerusform>Výsledky po %n etapách</numerusform>
+            <numerusform>Výsledky po %n etapách</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1611"/>
+        <location filename="src/runsplugin.cpp" line="1625"/>
         <source>Awards after %1 stages</source>
         <translation>Diplomy po %1 etapách</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1662"/>
-        <location filename="src/runsplugin.cpp" line="1847"/>
+        <location filename="src/runsplugin.cpp" line="1676"/>
+        <location filename="src/runsplugin.cpp" line="1861"/>
         <source>length:</source>
         <translation>délka:</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1664"/>
-        <location filename="src/runsplugin.cpp" line="1849"/>
+        <location filename="src/runsplugin.cpp" line="1678"/>
+        <location filename="src/runsplugin.cpp" line="1863"/>
         <source>climb:</source>
         <translation>převýšení:</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1667"/>
-        <location filename="src/runsplugin.cpp" line="1754"/>
-        <location filename="src/runsplugin.cpp" line="1853"/>
+        <location filename="src/runsplugin.cpp" line="1681"/>
+        <location filename="src/runsplugin.cpp" line="1768"/>
+        <location filename="src/runsplugin.cpp" line="1867"/>
         <source>Top</source>
         <translation>Nahoru</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1674"/>
-        <location filename="src/runsplugin.cpp" line="1761"/>
+        <location filename="src/runsplugin.cpp" line="1688"/>
+        <location filename="src/runsplugin.cpp" line="1775"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1675"/>
-        <location filename="src/runsplugin.cpp" line="1763"/>
-        <location filename="src/runsplugin.cpp" line="1861"/>
-        <location filename="src/runsplugin.cpp" line="1949"/>
+        <location filename="src/runsplugin.cpp" line="1689"/>
+        <location filename="src/runsplugin.cpp" line="1777"/>
+        <location filename="src/runsplugin.cpp" line="1875"/>
+        <location filename="src/runsplugin.cpp" line="1963"/>
         <source>Name</source>
         <translation>Jméno</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1676"/>
-        <location filename="src/runsplugin.cpp" line="1764"/>
-        <location filename="src/runsplugin.cpp" line="1862"/>
-        <location filename="src/runsplugin.cpp" line="1964"/>
+        <location filename="src/runsplugin.cpp" line="1690"/>
+        <location filename="src/runsplugin.cpp" line="1778"/>
+        <location filename="src/runsplugin.cpp" line="1876"/>
+        <location filename="src/runsplugin.cpp" line="1978"/>
         <source>Registration</source>
         <translation>Registrace</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1677"/>
-        <location filename="src/runsplugin.cpp" line="1765"/>
+        <location filename="src/runsplugin.cpp" line="1691"/>
+        <location filename="src/runsplugin.cpp" line="1779"/>
         <source>SI</source>
         <translation>SI</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1762"/>
+        <location filename="src/runsplugin.cpp" line="1776"/>
         <source>Class</source>
         <translation>Kategorie</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1803"/>
+        <location filename="src/runsplugin.cpp" line="1817"/>
         <source>Preparing data</source>
         <translation>Připravuji data</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1833"/>
+        <location filename="src/runsplugin.cpp" line="1847"/>
         <source>Procesing class %1</source>
         <translation>Zpracovávám kategorii %1</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1852"/>
+        <location filename="src/runsplugin.cpp" line="1866"/>
         <source>Laps</source>
         <translation>Mezičasy</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1860"/>
-        <location filename="src/runsplugin.cpp" line="1948"/>
+        <location filename="src/runsplugin.cpp" line="1874"/>
+        <location filename="src/runsplugin.cpp" line="1962"/>
         <source>Place</source>
         <translation>Pořadí</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1863"/>
+        <location filename="src/runsplugin.cpp" line="1877"/>
         <source>Club</source>
         <translation>Klub</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1864"/>
-        <location filename="src/runsplugin.cpp" line="1950"/>
+        <location filename="src/runsplugin.cpp" line="1878"/>
+        <location filename="src/runsplugin.cpp" line="1964"/>
         <source>Time</source>
         <translation>Čas</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1865"/>
-        <location filename="src/runsplugin.cpp" line="1951"/>
+        <location filename="src/runsplugin.cpp" line="1879"/>
+        <location filename="src/runsplugin.cpp" line="1965"/>
         <source>Loss</source>
         <translation>Ztráta</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1881"/>
-        <location filename="src/runsplugin.cpp" line="2019"/>
+        <location filename="src/runsplugin.cpp" line="1895"/>
+        <location filename="src/runsplugin.cpp" line="2033"/>
         <source>NC</source>
         <comment>Not Competing</comment>
         <translation>MS</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1884"/>
-        <location filename="src/runsplugin.cpp" line="2022"/>
+        <location filename="src/runsplugin.cpp" line="1898"/>
+        <location filename="src/runsplugin.cpp" line="2036"/>
         <source>DISQ</source>
         <translation>DISK</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1904"/>
-        <location filename="src/runsplugin.cpp" line="2043"/>
+        <location filename="src/runsplugin.cpp" line="1918"/>
+        <location filename="src/runsplugin.cpp" line="2057"/>
         <source>Stage results</source>
         <translation>Výsledky etapy</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1923"/>
+        <location filename="src/runsplugin.cpp" line="1937"/>
         <source>Warning</source>
         <translation>Varování</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1923"/>
+        <location filename="src/runsplugin.cpp" line="1937"/>
         <source>Export error</source>
         <translation>Chyba při exportu</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1925"/>
+        <location filename="src/runsplugin.cpp" line="1939"/>
         <source>Information</source>
         <translation>Informace</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1925"/>
+        <location filename="src/runsplugin.cpp" line="1939"/>
         <source>Results exported to %1</source>
         <translation>Výsledky exportovány do %1</translation>
     </message>
     <message>
-        <location filename="src/runsplugin.cpp" line="1957"/>
+        <location filename="src/runsplugin.cpp" line="1971"/>
         <source>FIN</source>
         <translation>CÍL</translation>
     </message>
@@ -640,96 +658,101 @@
     </message>
     <message>
         <location filename="src/runstablemodel.cpp" line="42"/>
+        <source>Penalty</source>
+        <translation>Penalizace</translation>
+    </message>
+    <message>
+        <location filename="src/runstablemodel.cpp" line="43"/>
         <source>NC</source>
         <translation>MS</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="42"/>
+        <location filename="src/runstablemodel.cpp" line="43"/>
         <source>Not competing</source>
         <translation>Mimo soutěž</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="43"/>
+        <location filename="src/runstablemodel.cpp" line="44"/>
         <source>RR</source>
         <oldsource>LR</oldsource>
         <translation>VP</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="43"/>
+        <location filename="src/runstablemodel.cpp" line="44"/>
         <source>Card rent requested</source>
         <translation>Vyžádáno půjčení čipu</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="44"/>
+        <location filename="src/runstablemodel.cpp" line="45"/>
         <source>RT</source>
         <oldsource>LT</oldsource>
         <comment>cardInLentTable</comment>
         <translation>ČT</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="44"/>
+        <location filename="src/runstablemodel.cpp" line="45"/>
         <source>Card in rent table</source>
         <oldsource>Card in lent table</oldsource>
         <translation>Čip z tabulky čipů k zapůjčení</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="45"/>
+        <location filename="src/runstablemodel.cpp" line="46"/>
         <source>R</source>
         <translation>ČV</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="45"/>
+        <location filename="src/runstablemodel.cpp" line="46"/>
         <source>Card returned</source>
         <translation>Čip vrácen</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="46"/>
+        <location filename="src/runstablemodel.cpp" line="47"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="46"/>
+        <location filename="src/runstablemodel.cpp" line="47"/>
         <source>Disqualification reason</source>
         <translation>Důvod diskvalifikace</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="47"/>
+        <location filename="src/runstablemodel.cpp" line="48"/>
         <source>DISQ</source>
         <translation>DISK</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="47"/>
+        <location filename="src/runstablemodel.cpp" line="48"/>
         <source>Disqualified</source>
         <translation>Diskvalifikace</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="48"/>
+        <location filename="src/runstablemodel.cpp" line="49"/>
         <source>Note</source>
         <translation>Poznámka</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="79"/>
+        <location filename="src/runstablemodel.cpp" line="80"/>
         <source>MisPunch</source>
         <translation>Chybné ražení</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="81"/>
+        <location filename="src/runstablemodel.cpp" line="82"/>
         <source>BadCheck</source>
         <translation>Špatný čas kontroly nulování čipu</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="102"/>
+        <location filename="src/runstablemodel.cpp" line="103"/>
         <source>Cannot set not running flag for competitor with valid finish time.</source>
         <oldsource>Canont set not running flag for competitor with valid finish time.</oldsource>
         <translation>Nelze nastavit příznak &quot;nestartuje&quot; závodníkovi s validním cílovým časem.</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="264"/>
+        <location filename="src/runstablemodel.cpp" line="285"/>
         <source>Mid-air collision switching start times, reload table and try it again.</source>
         <translation>Pokus o současné prohození startovního času ze dvou míst, obnovte tabulku a zkuste to znovu.</translation>
     </message>
     <message>
-        <location filename="src/runstablemodel.cpp" line="308"/>
+        <location filename="src/runstablemodel.cpp" line="329"/>
         <source>Mid-air collision setting start time, reload table and try it again.</source>
         <translation>Pokus o současnou změnu startovního času ze dvou míst, obnovte tabulku a zkuste to znovu.</translation>
     </message>
@@ -840,274 +863,274 @@
         <translation>Losovat kategorii</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="76"/>
+        <location filename="src/runswidget.cpp" line="83"/>
         <source>Randomized equidistant clubs</source>
         <translation>Náhodné rozmístění klubů</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="77"/>
+        <location filename="src/runswidget.cpp" line="84"/>
         <source>Random number</source>
         <translation>Náhodné číslo</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="82"/>
+        <location filename="src/runswidget.cpp" line="89"/>
         <source>Grouped: C, B+A (PSOB DH12-14)</source>
         <translation>Po skupinách: C, B+A (PSOB DH12–14)</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="83"/>
+        <location filename="src/runswidget.cpp" line="90"/>
         <source>Grouped: C, B, A+E+R (PSOB DH16-20)</source>
         <translation>Po skupinách: C, B, A+E+R (PSOB DH16–20)</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="84"/>
+        <location filename="src/runswidget.cpp" line="91"/>
         <source>Grouped by ranking (PSOB DH21L)</source>
         <translation>Po skupinách podle rankingu (PSOB DH21L)</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="78"/>
+        <location filename="src/runswidget.cpp" line="85"/>
         <source>Equidistant clubs</source>
         <translation>Rozmístění klubů</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="79"/>
+        <location filename="src/runswidget.cpp" line="86"/>
         <source>Stage 1 reverse order</source>
         <translation>Obrácené pořadí oproti 1. etapě</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="80"/>
+        <location filename="src/runswidget.cpp" line="87"/>
         <source>Handicap</source>
         <translation>Hendikep</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="156"/>
-        <location filename="src/runswidget.cpp" line="252"/>
+        <location filename="src/runswidget.cpp" line="162"/>
+        <location filename="src/runswidget.cpp" line="258"/>
         <source>&amp;Start list</source>
         <translation>&amp;Startovní listina</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="159"/>
-        <location filename="src/runswidget.cpp" line="256"/>
+        <location filename="src/runswidget.cpp" line="165"/>
+        <location filename="src/runswidget.cpp" line="262"/>
         <source>&amp;Classes</source>
         <translation>&amp;Kategorie</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="164"/>
-        <location filename="src/runswidget.cpp" line="261"/>
+        <location filename="src/runswidget.cpp" line="170"/>
+        <location filename="src/runswidget.cpp" line="267"/>
         <source>C&amp;lubs</source>
         <translation>Klu&amp;by</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="169"/>
+        <location filename="src/runswidget.cpp" line="175"/>
         <source>&amp;Starters</source>
         <translation>&amp;Startéři</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="175"/>
+        <location filename="src/runswidget.cpp" line="181"/>
         <source>Classes n stages</source>
         <translation>Kategorie n etap</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="180"/>
+        <location filename="src/runswidget.cpp" line="186"/>
         <source>Clubs n stages</source>
         <translation>Kluby n etap</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="187"/>
+        <location filename="src/runswidget.cpp" line="193"/>
         <source>&amp;Results</source>
         <translation>&amp;Výsledky</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="190"/>
+        <location filename="src/runswidget.cpp" line="196"/>
         <source>&amp;Current stage</source>
         <translation>&amp;Aktuální etapa</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="196"/>
+        <location filename="src/runswidget.cpp" line="202"/>
         <source>Current stage for speaker</source>
         <translation>Aktuální etapa pro komentátora</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="202"/>
+        <location filename="src/runswidget.cpp" line="208"/>
         <source>Current stage awards</source>
         <translation>Diplomy pro aktuální etapu</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="208"/>
+        <location filename="src/runswidget.cpp" line="214"/>
         <source>&amp;After n stages</source>
         <translation>&amp;Po n etapách</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="213"/>
+        <location filename="src/runswidget.cpp" line="219"/>
         <source>&amp;After n stages for speaker</source>
         <translation>Po n etapách pro &amp;komentátora</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="218"/>
+        <location filename="src/runswidget.cpp" line="224"/>
         <source>N stages awards</source>
         <translation>Diplomy po n etapách</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="226"/>
+        <location filename="src/runswidget.cpp" line="232"/>
         <source>&amp;Competitors with rented cards</source>
         <translation>&amp;Závodníci s půjčeným čipem</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="234"/>
+        <location filename="src/runswidget.cpp" line="240"/>
         <source>Competitors with rented cards</source>
         <translation>Závodníci s půjčeným čipem</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="253"/>
-        <location filename="src/runswidget.cpp" line="283"/>
+        <location filename="src/runswidget.cpp" line="259"/>
+        <location filename="src/runswidget.cpp" line="289"/>
         <source>&amp;HTML</source>
         <translation>&amp;HTML</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="266"/>
+        <location filename="src/runswidget.cpp" line="272"/>
         <source>&amp;XML</source>
         <translation>&amp;XML</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="269"/>
+        <location filename="src/runswidget.cpp" line="275"/>
         <source>&amp;IOF-XML 3.0</source>
         <translation>&amp;IOF XML 3.0</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="287"/>
+        <location filename="src/runswidget.cpp" line="293"/>
         <source>HTML with &amp;laps</source>
         <translation>HTML s &amp;mezičasy</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="351"/>
+        <location filename="src/runswidget.cpp" line="357"/>
         <source>Show o&amp;ff-race</source>
         <translation>Zobrazit &amp;nestartující závodníky</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="352"/>
+        <location filename="src/runswidget.cpp" line="358"/>
         <source>Include competitors who are not running in this stage</source>
         <translation>Zobrazit závodníky, kteří nestartují v této etapě</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="627"/>
+        <location filename="src/runswidget.cpp" line="633"/>
         <source>Draw all classes without draw lock?</source>
         <oldsource>Draw all clases without draw lock?</oldsource>
         <translation>Losovat všechny kategorie, u kterých není losování uzamčeno?</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="643"/>
+        <location filename="src/runswidget.cpp" line="649"/>
         <source>Class is locked for drawing.</source>
         <translation>Kategorie má uzamčené losování.</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="900"/>
+        <location filename="src/runswidget.cpp" line="910"/>
         <source>Reset all start times and unlock drawing for this class?</source>
         <oldsource>Reset all start times and unlock for drawing for this class?</oldsource>
         <translation>Odstranit všechny startovní časy v této kategorii a odemknout losování?</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="304"/>
+        <location filename="src/runswidget.cpp" line="310"/>
         <source>Stage </source>
         <translation>Etapa </translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="357"/>
+        <location filename="src/runswidget.cpp" line="363"/>
         <source>&amp;Draw options</source>
         <translation>&amp;Nastavení losování</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="112"/>
+        <location filename="src/runswidget.cpp" line="117"/>
         <source>E%1</source>
         <translation>E%1</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="73"/>
+        <location filename="src/runswidget.cpp" line="80"/>
         <source>Relays first leg</source>
         <translation>První úsek štafet</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="81"/>
+        <location filename="src/runswidget.cpp" line="88"/>
         <source>Keep runners order</source>
         <translation>Zachování pořadí závodníků</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="125"/>
-        <location filename="src/runswidget.cpp" line="331"/>
+        <location filename="src/runswidget.cpp" line="131"/>
+        <location filename="src/runswidget.cpp" line="337"/>
         <source>--- all ---</source>
         <translation>-- všechny --</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="154"/>
+        <location filename="src/runswidget.cpp" line="160"/>
         <source>&amp;Print</source>
         <translation>&amp;Tisk</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="243"/>
+        <location filename="src/runswidget.cpp" line="249"/>
         <source>&amp;Import</source>
         <translation>&amp;Importovat</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="251"/>
+        <location filename="src/runswidget.cpp" line="257"/>
         <source>E&amp;xport</source>
         <translation>E&amp;xportovat</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="245"/>
+        <location filename="src/runswidget.cpp" line="251"/>
         <source>Start times</source>
         <translation>Startovní časy</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="246"/>
+        <location filename="src/runswidget.cpp" line="252"/>
         <source>OB 2000</source>
         <translation>OB 2000</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="275"/>
+        <location filename="src/runswidget.cpp" line="281"/>
         <source>Results</source>
         <translation>Výsledky</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="279"/>
+        <location filename="src/runswidget.cpp" line="285"/>
         <source>IOF XML &amp;3.0</source>
         <translation>IOF XML &amp;3.0</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="290"/>
+        <location filename="src/runswidget.cpp" line="296"/>
         <source>CSOS</source>
         <translation>ČSOS</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="292"/>
+        <location filename="src/runswidget.cpp" line="298"/>
         <source>Current stage</source>
         <translation>Aktuální etapa</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="296"/>
+        <location filename="src/runswidget.cpp" line="302"/>
         <source>Overall</source>
         <translation>Celkové</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="314"/>
+        <location filename="src/runswidget.cpp" line="320"/>
         <source> &amp;Class </source>
         <translation> &amp;Kategorie </translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="327"/>
+        <location filename="src/runswidget.cpp" line="333"/>
         <source>&amp;Leg </source>
         <translation>&amp;Úsek </translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="457"/>
+        <location filename="src/runswidget.cpp" line="463"/>
         <source>Import</source>
         <translation>Importovat</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="546"/>
+        <location filename="src/runswidget.cpp" line="552"/>
         <source>Save as %1</source>
         <translation>Uložit jako %1</translation>
     </message>
     <message>
-        <location filename="src/runswidget.cpp" line="820"/>
+        <location filename="src/runswidget.cpp" line="830"/>
         <source>Start interval is zero, proceed anyway?</source>
         <translation>Startovní interval je nula. Chcete přesto pokračovat?</translation>
     </message>
@@ -1147,43 +1170,53 @@
 </context>
 <context>
     <name>results_nstages</name>
-    <message>
+    <message numerus="yes">
         <location filename="qml/reports/results_nstages.qml" line="15"/>
-        <source>Results after %1 stages</source>
-        <translation>Výsledky po %1 etapách</translation>
+        <source>Results after %n stage(s)</source>
+        <oldsource>Results after %1 stages</oldsource>
+        <translation>
+            <numerusform>Výsledky po %n etapě</numerusform>
+            <numerusform>Výsledky po %n etapách</numerusform>
+            <numerusform>Výsledky po %n etapách</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="qml/reports/results_nstages.qml" line="137"/>
-        <source>registration</source>
-        <translation>registrace</translation>
+        <location filename="qml/reports/results_nstages.qml" line="138"/>
+        <source>Reg</source>
+        <translation>Reg. č.</translation>
     </message>
     <message>
-        <location filename="qml/reports/results_nstages.qml" line="142"/>
-        <source>Stage</source>
-        <translation>Etapa</translation>
+        <location filename="qml/reports/results_nstages.qml" line="143"/>
+        <source>Stage </source>
+        <translation>Etapa </translation>
     </message>
     <message>
-        <location filename="qml/reports/results_nstages.qml" line="145"/>
+        <location filename="qml/reports/results_nstages.qml" line="146"/>
         <source>Time</source>
         <translation>Čas</translation>
     </message>
     <message>
-        <location filename="qml/reports/results_nstages.qml" line="147"/>
+        <location filename="qml/reports/results_nstages.qml" line="148"/>
         <source>Loss</source>
         <translation>Ztráta</translation>
     </message>
     <message>
-        <location filename="qml/reports/results_nstages.qml" line="185"/>
+        <location filename="qml/reports/results_nstages.qml" line="186"/>
         <source>DISQ</source>
         <translation>DISK</translation>
     </message>
 </context>
 <context>
     <name>results_nstagesSpeaker</name>
-    <message>
+    <message numerus="yes">
         <location filename="qml/reports/results_nstagesSpeaker.qml" line="13"/>
-        <source>Results after %1 stages</source>
-        <translation>Výsledky po %1 etapách</translation>
+        <source>Results after %n stage(s)</source>
+        <oldsource>Results after %1 stages</oldsource>
+        <translation>
+            <numerusform>Výsledky po %n etapě</numerusform>
+            <numerusform>Výsledky po %n etapách</numerusform>
+            <numerusform>Výsledky po %n etapách</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="qml/reports/results_nstagesSpeaker.qml" line="130"/>
@@ -1282,10 +1315,15 @@
 </context>
 <context>
     <name>startList_classes_nstages</name>
-    <message>
+    <message numerus="yes">
         <location filename="qml/reports/startList_classes_nstages.qml" line="15"/>
-        <source>Start list by classes after %1 stages</source>
-        <translation>Startovní listina po kategoriích (%1 etapy)</translation>
+        <source>Start list by classes for %n stage(s)</source>
+        <oldsource>Start list by classes</oldsource>
+        <translation>
+            <numerusform>Startovní listina po kategoriích na %n etapu</numerusform>
+            <numerusform>Startovní listina po kategoriích na %n etapy</numerusform>
+            <numerusform>Startovní listina po kategoriích na %n etap</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="qml/reports/startList_classes_nstages.qml" line="113"/>
@@ -1316,20 +1354,40 @@
         <translation>Startovní listina po klubech</translation>
     </message>
     <message>
-        <location filename="qml/reports/startList_clubs.qml" line="134"/>
-        <source>R</source>
-        <translation>P</translation>
+        <location filename="qml/reports/startList_clubs.qml" line="137"/>
+        <source>R </source>
+        <translation>P </translation>
     </message>
 </context>
 <context>
     <name>startList_clubs_nstages</name>
-    <message>
+    <message numerus="yes">
         <location filename="qml/reports/startList_clubs_nstages.qml" line="15"/>
-        <source>Start list by clubs after %1 stages</source>
-        <translation>Startovní listina po klubech (%1 etapy)</translation>
+        <source>Start list by clubs for %n stage(s)</source>
+        <oldsource>Start list by clubs</oldsource>
+        <translation>
+            <numerusform>Startovní listina po klubech na %n etapu</numerusform>
+            <numerusform>Startovní listina po klubech na %n etapy</numerusform>
+            <numerusform>Startovní listina po klubech na %n etap</numerusform>
+        </translation>
     </message>
     <message>
-        <location filename="qml/reports/startList_clubs_nstages.qml" line="118"/>
+        <location filename="qml/reports/startList_clubs_nstages.qml" line="119"/>
+        <source>Bib</source>
+        <translation>SČ</translation>
+    </message>
+    <message>
+        <location filename="qml/reports/startList_clubs_nstages.qml" line="125"/>
+        <source>Registration</source>
+        <translation>Registrace</translation>
+    </message>
+    <message>
+        <location filename="qml/reports/startList_clubs_nstages.qml" line="132"/>
+        <source>SI</source>
+        <translation>SI</translation>
+    </message>
+    <message>
+        <location filename="qml/reports/startList_clubs_nstages.qml" line="139"/>
         <source>Stage</source>
         <translation>Etapa</translation>
     </message>

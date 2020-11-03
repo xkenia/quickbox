@@ -285,7 +285,6 @@ void EventPlugin::onInstalled()
 
 	m_actCreateEvent = new qfw::Action(tr("Create eve&nt"));
 	//m_actCreateEvent->setShortcut("Ctrl+N");
-	m_actCreateEvent->setEnabled(false);
 	connect(m_actCreateEvent, SIGNAL(triggered()), this, SLOT(createEvent()));
 
 	m_actEditEvent = new qfw::Action(tr("E&dit event"));
@@ -300,7 +299,6 @@ void EventPlugin::onInstalled()
 	connect(m_actExportEvent_qbe, &QAction::triggered, this, &EventPlugin::exportEvent_qbe);
 
 	m_actImportEvent_qbe = new qfw::Action(tr("Event (*.qbe)"));
-	m_actImportEvent_qbe->setEnabled(false);
 	connect(m_actImportEvent_qbe, &QAction::triggered, this, &EventPlugin::importEvent_qbe);
 
 	connect(this, SIGNAL(eventNameChanged(QString)), fwk->statusBar(), SLOT(setEventName(QString)));
@@ -308,7 +306,7 @@ void EventPlugin::onInstalled()
 	connect(this, &EventPlugin::currentStageIdChanged, this, &EventPlugin::updateWindowTitle);
 	connect(this, SIGNAL(currentStageIdChanged(int)), fwk->statusBar(), SLOT(setStageNo(int)));
 	connect(fwk, &qff::MainWindow::pluginsLoaded, this, &EventPlugin::connectToSqlServer);
-	connect(this, &EventPlugin::eventOpened, this, &EventPlugin::onEventOpened);
+	connect(this, &EventPlugin::eventOpenChanged, this, &EventPlugin::onEventOpened);
 
 	qfw::Action *a_import = fwk->menuBar()->actionForPath("file/import", false);
 	Q_ASSERT(a_import);
@@ -316,16 +314,19 @@ void EventPlugin::onInstalled()
 	a_import->addSeparatorBefore();
 
 	m_actEvent = m_actConnectDb->addMenuAfter("file.event", tr("&Event"));
+	m_actEvent->setEnabled(false);
 
 	m_actEvent->addActionInto(m_actCreateEvent);
 	m_actEvent->addActionInto(m_actOpenEvent);
 	m_actEvent->addActionInto(m_actEditEvent);
 
-	qfw::Action *act_import = fwk->menuBar()->actionForPath("file/import");
-	act_import->addActionInto(m_actImportEvent_qbe);
+	m_actImport = fwk->menuBar()->actionForPath("file/import");
+	m_actImport->addActionInto(m_actImportEvent_qbe);
+	m_actImport->setEnabled(false);
 
-	qfw::Action *act_export = fwk->menuBar()->actionForPath("file/export");
-	act_export->addActionInto(m_actExportEvent_qbe);
+	m_actExport = fwk->menuBar()->actionForPath("file/export");
+	m_actExport->addActionInto(m_actExportEvent_qbe);
+	m_actExport->setEnabled(false);
 
 	qfw::ToolBar *tb = fwk->toolBar("Event", true);
 	tb->setObjectName("EventToolbar");
@@ -551,6 +552,8 @@ void EventPlugin::repairStageStarts(const qf::core::sql::Connection &from_conn, 
 
 void EventPlugin::onEventOpened()
 {
+	if(!isEventOpen())
+		return;
 	qfLogFuncFrame() << "stage count:" << stageCount();
 	m_cbxStage->blockSignals(true);
 	m_cbxStage->clear();
@@ -630,9 +633,17 @@ void EventPlugin::connectToSqlServer()
 	dlg.setCentralWidget(conn_w);
 	while(!connect_ok) {
 		conn_w->loadSettings();
-		if(!dlg.exec())
+		if(!dlg.exec()) {
+			if(!m_sqlServerConnected) {
+				qfd::MessageBox::showWarning(fwk, tr("You are not connected to database.\n"
+								     "Program features will be limited.\n\n"
+								     "To connect to a database or to choose a working directory where event files can be stored, navigate to:\n "
+								     "\"File -> Connect to database\" "));
+				break;
+			}
 			return;
 
+		}
 		conn_w->saveSettings();
 		connection_type = conn_w->connectionType();
 		qfDebug() << "connection_type:" << (int)connection_type;
@@ -672,19 +683,30 @@ void EventPlugin::connectToSqlServer()
 			}
 		}
 		else {
-			QString driver_name = "QSQLITE";
-			QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
-			QSqlDatabase db = QSqlDatabase::addDatabase(driver_name);
-			connect_ok = true;
+			QString single_working_dir = conn_w->singleWorkingDir();
+			bool swd_empty = single_working_dir.isEmpty();
+			if(swd_empty) {
+				qfd::MessageBox::showError(fwk, tr("Path to the working directory cannot be empty.\n\nEnter path to the working directory or connect to SQL server."));
+			}
+			bool swd_exist = QDir (single_working_dir).exists();
+			if(!swd_exist) {
+				qfd::MessageBox::showError(fwk, tr("Entered directory does not exist:\n%1\n\nEnter a valid path to the working directory.").arg(single_working_dir));
+			}
+			if(!swd_empty && swd_exist) {
+				QString driver_name = "QSQLITE";
+				QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+				QSqlDatabase db = QSqlDatabase::addDatabase(driver_name);
+				connect_ok = true;
+			}
 		}
 	}
 	setSqlServerConnected(connect_ok);
-	m_actCreateEvent->setEnabled(connect_ok);
-	m_actOpenEvent->setEnabled(connect_ok);
-	m_actEditEvent->setEnabled(connect_ok);
-	m_actExportEvent_qbe->setEnabled(connect_ok);
-	m_actImportEvent_qbe->setEnabled(connect_ok);
+	m_actEvent->setEnabled(connect_ok);
+	m_actExport->setEnabled(connect_ok);
+	m_actImport->setEnabled(connect_ok);
+	m_actEditStage->setEnabled(connect_ok);
 	if(connect_ok) {
+		closeEvent();
 		openEvent(conn_w->eventName());
 	}
 }
@@ -850,61 +872,57 @@ bool EventPlugin::closeEvent()
 	m_classNameCache.clear();
 	setEventName(QString());
 	QF_SAFE_DELETE(m_eventConfig)
-	//emit eventOpened(eventName()); //comment it till QE can load event with invalid name
+	setEventOpen(false);
 	return true;
 }
 
 bool EventPlugin::openEvent(const QString &_event_name)
 {
-	closeEvent();
-	//return true;
 	qff::MainWindow *fwk = qff::MainWindow::frameWork();
 	QString event_name = _event_name;
+	QStringList db_event_names = QStringList();
+	QString empty_message;
 	ConnectionSettings connection_settings;
 	ConnectionType connection_type = connection_settings.connectionType();
 	//console.debug("openEvent()", "event_name:", event_name, "connection_type:", connection_type);
-	bool ok = false;
-	if(connection_type == ConnectionType::SqlServer) {
-		//console.debug(db);
-		QStringList event_names = existingSqlEventNames();
-		if(!event_names.contains(event_name))
-			event_name = QString();
-		ok = !event_name.isEmpty();
-		if(!ok) {
-			event_name = QInputDialog::getItem(fwk, tr("Query"), tr("Open event"), event_names, 0, false, &ok);
-		}
-		//Log.info(event_name, typeof event_name, (event_name)? "T": "F");
-		ok = ok && !event_name.isEmpty();
-		if(ok) {
+	bool ok = true;
+	switch (connection_type) {
+		case ConnectionType::SqlServer:
+			db_event_names = existingSqlEventNames();
+			empty_message = tr("Connected to an empty database.\nStart by creating or importing an event.");
+			break;
+		case ConnectionType::SingleFile:
+			db_event_names = existingFileEventNames(connection_settings.singleWorkingDir());
+			empty_message = tr("Working directory does not contain any event files.\nStart by creating or importing an event.");
+			break;
+	}
+	if(db_event_names.isEmpty()) {
+		// openEvent function was called on empty database
+		qfd::MessageBox::showInfo(fwk, empty_message);
+		ok = false;
+	}
+	else if (!db_event_names.contains(event_name)) {
+		// database does not contain given event_name => ask which event to open
+		event_name = QInputDialog::getItem(fwk, tr("Open event"), tr("select event to open:"), db_event_names, 0, false, &ok);
+	}
+	// if given event_name is in the db, preceeding conditions were skipped => ok => open event_name
+	// if dialog was succesfull => ok => open event_name
+	// if dialog was canceled => !ok => close event and disable menu options
+	if(!eventName().isEmpty() && db_event_names.contains(eventName()) && !ok) // open event dialog was canceled and event is already opened => no change, return
+		return true;
+
+	closeEvent();
+
+	if(ok) {
+		if(connection_type == ConnectionType::SqlServer) {
 			qfs::Connection conn(QSqlDatabase::database());
 			if(conn.setCurrentSchema(event_name)) {
 				ConnectionSettings settings;
 				settings.setEventName(event_name);
-				ok = true;
 			}
-		}
-	}
-	else if(connection_type == ConnectionType::SingleFile) {
-		QString event_fn;
-		if(!event_name.isEmpty()) {
-			event_fn = eventNameToFileName(event_name);
-			if(!QFile::exists(event_fn)) {
-				event_fn = event_name = QString();
-			}
-		}
-		if(event_name.isEmpty()) {
-			QStringList event_names = existingFileEventNames(connection_settings.singleWorkingDir());
-			event_name = QInputDialog::getItem(fwk, tr("Query"), tr("Open event"), event_names, 0, false, &ok);
-			//event_fn = qfd::FileDialog::getOpenFileName(fwk, tr("Select event"), connection_settings.singleWorkingDir(), tr("Quick Event files (*%1)").arg(qbe_ext));
-			if(ok && !event_name.isEmpty()) {
-				event_fn = eventNameToFileName(event_name);
-			}
-		}
-		//Log.info(event_name, typeof event_name, (event_name)? "T": "F");
-		if(event_fn.isEmpty()) {
-			ok = false;
 		}
 		else {
+			QString event_fn = eventNameToFileName(event_name);
 			if(QFile::exists(event_fn)) {
 				{
 					QString conn_name;
@@ -926,15 +944,15 @@ bool EventPlugin::openEvent(const QString &_event_name)
 				}
 				else {
 					qfd::MessageBox::showError(fwk, tr("Open Database Error: %1").arg(conn.errorString()));
+					ok = false;
 				}
 			}
 			else {
 				qfd::MessageBox::showError(fwk, tr("Database file %1 doesn't exist.").arg(event_fn));
+				ok = false;
 			}
+
 		}
-	}
-	else {
-		qfError() << "Invalid connection type:" << static_cast<int>(connection_type);
 	}
 	if(ok) {
 		EventConfig *evc = eventConfig(true);
@@ -943,17 +961,23 @@ bool EventPlugin::openEvent(const QString &_event_name)
 									   .arg(qf::core::Utils::intToVersionString(evc->dbVersion()))
 									   .arg(qf::core::Utils::intToVersionString(minDbVersion())));
 			closeEvent();
-			return false;
+			ok = false;
 		}
-		if(evc->dbVersion() > minDbVersion()) {
+		else if(evc->dbVersion() > minDbVersion()) {
 			qfd::MessageBox::showError(fwk, tr("Event was created in more recent QuickEvent version (%1) and the application might not work as expected. Download latest QuickEvent is strongly recommended.")
 									   .arg(qf::core::Utils::intToVersionString(evc->dbVersion())));
 		}
+	}
+	if(ok) {
 		connection_settings.setEventName(event_name);
 		setEventName(event_name);
-		emit eventOpened(eventName());
 		//emit reloadDataRequest();
 	}
+	m_actEditStage->setEnabled(ok);
+	m_actOpenEvent->setEnabled(ok || !db_event_names.isEmpty());
+	m_actEditEvent->setEnabled(ok);
+	m_actExportEvent_qbe->setEnabled(ok);
+	setEventOpen(ok);
 	return ok;
 }
 

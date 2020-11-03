@@ -33,8 +33,15 @@
 #include <QLabel>
 #include <QInputDialog>
 #include <QTimer>
+#include <QRandomGenerator>
 
 #include <algorithm>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+static const auto SkipEmptyParts = QString::SkipEmptyParts;
+#else
+static const auto SkipEmptyParts = Qt::SkipEmptyParts;
+#endif
 
 namespace qfs = qf::core::sql;
 namespace qfw = qf::qmlwidgets;
@@ -64,9 +71,9 @@ RunsWidget::RunsWidget(QWidget *parent) :
 
 	ui->frmDrawing->setVisible(false);
 
-	connect(eventPlugin(), &Event::EventPlugin::eventOpened, [this](QString event_name) {
+	connect(eventPlugin(), &Event::EventPlugin::eventOpenChanged, [this]() {
 		ui->cbxDrawMethod->clear();
-		if(event_name.isEmpty())
+		if(!eventPlugin()->isEventOpen())
 			return;
 		bool is_relays = eventPlugin()->eventConfig()->isRelays();
 		if(is_relays) {
@@ -84,7 +91,6 @@ RunsWidget::RunsWidget(QWidget *parent) :
 			ui->cbxDrawMethod->addItem(tr("Grouped by ranking (PSOB DH21L)"), static_cast<int>(DrawMethod::GroupedRanking));
 		}
 	});
-
 	QMetaObject::invokeMethod(this, &RunsWidget::lazyInit, Qt::QueuedConnection);
 }
 
@@ -100,7 +106,6 @@ void RunsWidget::lazyInit()
 void RunsWidget::reset(int class_id)
 {
 	qfLogFuncFrame();
-	bool is_relays = eventPlugin()->eventConfig()->isRelays();
 	if(!eventPlugin()->isEventOpen()) {
 		ui->wRunsTableWidget->clear();
 		return;
@@ -116,6 +121,7 @@ void RunsWidget::reset(int class_id)
 	}
 	/// Note: You should use QAction::setVisible() to change the visibility of the widget.
 	/// Using QWidget::setVisible(), QWidget::show() and QWidget::hide() does not work.
+	bool is_relays = eventPlugin()->eventConfig()->isRelays();
 	m_toolbarActionLabelLeg->setVisible(is_relays);
 	m_toolbarActionComboLeg->setVisible(is_relays);
 	//qfWarning() << "is relays:" << is_relays << "legs visible:" << m_cbxLeg->isVisible();
@@ -124,7 +130,7 @@ void RunsWidget::reset(int class_id)
 		m_cbxClasses->loadItems(true);
 		m_cbxClasses->insertItem(0, tr("--- all ---"), 0);
 		if(class_id <= 0)
-			m_cbxClasses->setCurrentIndex(1);
+			m_cbxClasses->setCurrentIndex(0);
 		else
 			m_cbxClasses->setCurrentData(class_id);
 		connect(m_cbxClasses, SIGNAL(currentDataChanged(QVariant)), this, SLOT(reload()), Qt::UniqueConnection);
@@ -493,7 +499,7 @@ void RunsWidget::import_start_times_ob2000()
 					qfDebug() << ba.size() << ba;
 					//if(ba.isEmpty())
 					//	break;
-					QStringList sl = QString::fromLatin1(ba).split(' ', QString::SkipEmptyParts);
+					QStringList sl = QString::fromLatin1(ba).split(' ', SkipEmptyParts);
 					if(sl.count() < 5)
 						continue;
 					bool ok;
@@ -770,14 +776,18 @@ void RunsWidget::on_btDraw_clicked()
 					}
 				}
 				if(draw_method == DrawMethod::RandomizedEquidistantClubs) {
-					qsrand((uint)QTime::currentTime().msecsSinceStartOfDay());
+					QRandomGenerator *rnd_gen = QRandomGenerator::global();
+					//rnd_gen->seed((uint)QTime::currentTime().msecsSinceStartOfDay());
+					//qsrand((uint)QTime::currentTime().msecsSinceStartOfDay());
 					int cnt = runners_draw_ids.count();
 					for (int i = 0; i < 2*cnt; ++i) {
 						// randomly switch rudders fi their clubs will not get consequent
-						int ix1 = (int)(qrand() * (double)cnt / RAND_MAX);
+						int ix1 = rnd_gen->bounded(cnt);
+						//int ix1 = (int)(qrand() * (double)cnt / RAND_MAX);
 						if(ix1 >= cnt)
 							ix1 = cnt - 1;
-						int ix2 = (int)(qrand() * (double)cnt / RAND_MAX);
+						int ix2 = rnd_gen->bounded(cnt);
+						//int ix2 = (int)(qrand() * (double)cnt / RAND_MAX);
 						if(ix2 >= cnt)
 							ix2 = cnt - 1;
 						if(ix1 == ix2)

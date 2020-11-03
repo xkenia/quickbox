@@ -76,9 +76,9 @@ Schema {
 				},
 				Field { name: 'longitude'; type: Real { } },
 				Field { name: 'latitude'; type: Real { } },
-				Field { name: 'type'; type: String { }
-					comment: 'S - start, F - finish'
-				},
+				//Field { name: 'type'; type: String { }
+				//	comment: 'S - start, F - finish'
+				//},
 				Field { name: 'note'; type: String { } }
 			]
 			indexes: [
@@ -249,7 +249,7 @@ Schema {
 				},
 				Index {fields: ['stageId']; references: ForeignKeyReference {table: 'stages'; fields: ['id']; } },
 				Index {fields: ['relayId', 'leg']; unique: false },
-				Index {fields: ['stageId', 'siId']; unique: false }
+				Index {fields: ['stageId', 'siId']; unique: false } // might be duplicate to enable SI card sharing in not overlapping runs
 			]
 		},
 		Table { name: 'relays'

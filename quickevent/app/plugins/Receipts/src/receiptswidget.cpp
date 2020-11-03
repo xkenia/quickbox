@@ -87,8 +87,8 @@ ReceiptsWidget::ReceiptsWidget(QWidget *parent) :
 		m_cardsModel = m;
 	}
 
-	ui->lstNotFound->addItem(tr("Receipt without name"), 0);
-	ui->lstNotFound->addItem(tr("Error info"), 1);
+	ui->lstNotFound->addItem(tr("Error info"), 0);
+	ui->lstNotFound->addItem(tr("Receipt without name"), 1);
 	ui->lstNotFound->setCurrentIndex(0);
 
 	ui->tblCards->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -115,7 +115,7 @@ void ReceiptsWidget::lazyInit()
 void ReceiptsWidget::settleDownInPartWidget(ReceiptsPartWidget *part_widget)
 {
 	connect(part_widget, SIGNAL(resetPartRequest()), this, SLOT(reset()));
-	connect(part_widget, SIGNAL(reloadPartRequest()), this, SLOT(reset()));
+	connect(part_widget, SIGNAL(reloadPartRequest()), this, SLOT(reload()));
 
 	connect(eventPlugin(), &Event::EventPlugin::dbEventNotify, this, &ReceiptsWidget::onDbEventNotify, Qt::QueuedConnection);
 }
@@ -204,7 +204,7 @@ int ReceiptsWidget::currentStageId()
 
 void ReceiptsWidget::onCardRead()
 {
-	if(ui->chkAutoPrint->isChecked()) {
+	if(isAutoPrintEnabled()) {
 		printNewCards();
 	}
 	loadNewCards();
@@ -287,9 +287,9 @@ bool ReceiptsWidget::printReceipt(int card_id)
 			else
 			{
 				if (ui->lstNotFound->currentIndex() == 0)
-					return receiptsPlugin()->printCard(card_id);
-				else
 					return receiptsPlugin()->printError(card_id);
+				else
+					return receiptsPlugin()->printCard(card_id);
 			}
 		}
 	}
@@ -345,4 +345,9 @@ void ReceiptsWidget::on_btPrinterOptions_clicked()
 		receiptsPlugin()->setReceiptsPrinterOptions(dlg.printerOptions());
 		updateReceiptsPrinterLabel();
 	}
+}
+
+bool ReceiptsWidget::isAutoPrintEnabled()
+{
+	return ui->chkAutoPrint->isChecked();
 }

@@ -1,0 +1,12 @@
+#! /usr/bin/dh-exec
+lib/libCardReaderQEPlugin.so /opt/quickevent/lib/
+lib/libClassesQEPlugin.so /opt/quickevent/lib/
+lib/libCompetitorsQEPlugin.so /opt/quickevent/lib/
+lib/libCoreQEPlugin.so /opt/quickevent/lib/
+lib/libEventQEPlugin.so /opt/quickevent/lib/
+lib/libOrisQEPlugin.so /opt/quickevent/lib/
+lib/libReceiptsQEPlugin.so /opt/quickevent/lib/
+lib/libRelaysQEPlugin.so /opt/quickevent/lib/
+lib/libRunsQEPlugin.so /opt/quickevent/lib/
+lib/libsharedQEPlugin.so /opt/quickevent/lib/
+lib/libSpeakerQEPlugin.so /opt/quickevent/lib/

@@ -20,6 +20,5 @@ win32 {
 	POST_TARGETDEPS += datafiles
 	QMAKE_EXTRA_TARGETS += datafiles
 	datafiles.commands = \
-		# mkdir not needed for windows
-		xcopy $$shell_path($$SRC_DATA_DIR) $$shell_path($$DEST_DATA_DIR) /E /Y /I
+		xcopy $$system_quote($$system_path($$SRC_DATA_DIR)) $$system_quote($$system_path($$DEST_DATA_DIR)) /s /e /y /i
 }

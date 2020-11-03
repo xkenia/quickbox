@@ -219,6 +219,7 @@ void RelaysWidget::reset()
 		m_cbxClasses->blockSignals(true);
 		m_cbxClasses->loadItems(true);
 		m_cbxClasses->insertItem(0, tr("--- all ---"), 0);
+		m_cbxClasses->setCurrentIndex(0);
 		connect(m_cbxClasses, SIGNAL(currentDataChanged(QVariant)), this, SLOT(reload()), Qt::UniqueConnection);
 		m_cbxClasses->blockSignals(false);
 	}
@@ -244,7 +245,7 @@ void RelaysWidget::reload()
 void RelaysWidget::editRelay(const QVariant &id, int mode)
 {
 	qfLogFuncFrame() << "id:" << id << "mode:" << mode;
-	qf::core::sql::Transaction transaction;
+	//qf::core::sql::Transaction transaction;
 	auto *w = new  RelayWidget();
 	w->setWindowTitle(tr("Edit Relay"));
 	qfd::Dialog dlg(QDialogButtonBox::Save | QDialogButtonBox::Cancel, this);
@@ -264,10 +265,10 @@ void RelaysWidget::editRelay(const QVariant &id, int mode)
 	}
 	connect(doc, &Relays:: RelayDocument::saved, ui->tblRelays, &qf::qmlwidgets::TableView::rowExternallySaved, Qt::QueuedConnection);
 	bool ok = dlg.exec();
-	if(ok)
-		transaction.commit();
-	else
-		transaction.rollback();
+	//if(ok)
+	//	transaction.commit();
+	//else
+	//	transaction.rollback();
 	if(ok && save_and_next) {
 		QTimer::singleShot(0, [this]() {
 			this->editRelay(QVariant(), qf::core::model::DataDocument::ModeInsert);
@@ -281,7 +282,7 @@ void RelaysWidget::editRelays(int mode)
 		QList<int> sel_rows = ui->tblRelays->selectedRowsIndexes();
 		if(sel_rows.count() <= 1)
 			return;
-		if(qfd::MessageBox::askYesNo(this, tr("Really delete all the selected competitors? This action cannot be reverted."), false)) {
+		if(qfd::MessageBox::askYesNo(this, tr("Really delete all the selected relays? This action cannot be reverted."), false)) {
 			qfs::Transaction transaction;
 			int n = 0;
 			for(int ix : sel_rows) {
@@ -546,7 +547,7 @@ void RelaysWidget::print_results_nlegs()
 	qf::qmlwidgets::reports::ReportViewWidget::showReport(this,
 														  thisPlugin()->manifest()->homeDir() + "/reports/results.qml"
 														  , td.toVariant()
-														  , tr("Start list by clubs")
+														  , tr("Results")
 														  , "relaysResults"
 														  , props
 														  );
@@ -570,7 +571,7 @@ void RelaysWidget::print_results_overal()
 	qf::qmlwidgets::reports::ReportViewWidget::showReport(this,
 														  thisPlugin()->manifest()->homeDir() + "/reports/results.qml"
 														  , td.toVariant()
-														  , tr("Start list by clubs")
+														  , tr("Results")
 														  , "relaysResults"
 														  , props
 														  );
@@ -594,7 +595,7 @@ void RelaysWidget::print_results_overal_condensed()
 	qf::qmlwidgets::reports::ReportViewWidget::showReport(this,
 														  thisPlugin()->manifest()->homeDir() + "/reports/results_condensed.qml"
 														  , td.toVariant()
-														  , tr("Start list by clubs")
+														  , tr("Results")
 														  , "relaysResults"
 														  , props
 														  );
@@ -722,7 +723,7 @@ void RelaysWidget::export_results_iofxml3()
 				append_list(person_result, QVariantList{"Leg", k+1 } );
 				append_list(person_result, QVariantList{"BibNumber", QString::number(relay_number) + '.' + QString::number(k+1)});
 				int run_id = tt_leg_row.value(QStringLiteral("runId")).toInt();
-				int stime = 0, ftime = 0, time = 0;
+				int stime = 0, ftime = 0, time_msec = 0;
 				if(run_id > 0) {
 					qfs::QueryBuilder qb;
 					qb.select2("runs", "startTimeMs, finishTimeMs, timeMs")
@@ -732,7 +733,7 @@ void RelaysWidget::export_results_iofxml3()
 					if(q.next()) {
 						stime = q.value(0).toInt();
 						ftime = q.value(1).toInt();
-						time = q.value(2).toInt();
+						time_msec = q.value(2).toInt();
 					}
 					else {
 						qfWarning() << "Cannot load run for id:" << run_id;
@@ -740,13 +741,13 @@ void RelaysWidget::export_results_iofxml3()
 				}
 				append_list(person_result, QVariantList{"StartTime", datetime_to_string(start00.addMSecs(stime))});
 				append_list(person_result, QVariantList{"FinishTime", datetime_to_string(start00.addMSecs(ftime))});
-				append_list(person_result, QVariantList{"Time", time});
+				append_list(person_result, QVariantList{"Time", time_msec / 1000});
 				append_list(person_result, QVariantList{"Position", QVariantMap{{"type", "Leg"}}, tt_leg_row.value(QStringLiteral("pos"))});
 				// MISSING position course append_list(person_result, QVariantList{"Position", QVariantMap{{"type", "course"}}, tt_laps_row.value(QStringLiteral("pos"))});
 				append_list(person_result, QVariantList{"Status", tt_leg_row.value(QStringLiteral("status"))});
 				QVariantList overall_result{"OverallResult"};
 				{
-					append_list(overall_result, QVariantList{"Time", tt_leg_row.value(QStringLiteral("stime"))});
+					append_list(overall_result, QVariantList{"Time", tt_leg_row.value(QStringLiteral("stime")).toInt() / 1000});
 					append_list(overall_result, QVariantList{"Position", tt_leg_row.value(QStringLiteral("spos"))});
 					append_list(overall_result, QVariantList{"Status", tt_leg_row.value(QStringLiteral("sstatus"))});
 					// MISSING TimeBehind
@@ -802,7 +803,7 @@ void RelaysWidget::export_results_iofxml3()
 						}
 						QVariantList split{QStringLiteral("SplitTime")};
 						append_list(split, QVariantList{"ControlCode", cd.code()});
-						append_list(split, QVariantList{"Time", time});
+						append_list(split, QVariantList{"Time", time / 1000});
 						append_list(person_result, split);
 					}
 				}

@@ -85,14 +85,9 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/competitorwidget.cpp" line="351"/>
+        <location filename="src/competitorwidget.cpp" line="386"/>
         <source>Class should be entered.</source>
         <translation>Klasse skal skrives inn.</translation>
-    </message>
-    <message>
-        <location filename="src/competitorwidget.cpp" line="371"/>
-        <source>Duplicate SI inserted.</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -206,7 +201,7 @@
     </message>
     <message>
         <location filename="src/competitorswidget.cpp" line="135"/>
-        <location filename="src/competitorswidget.cpp" line="404"/>
+        <location filename="src/competitorswidget.cpp" line="410"/>
         <source>Competitors statistics</source>
         <translation type="unfinished"></translation>
     </message>
@@ -236,38 +231,38 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/competitorswidget.cpp" line="219"/>
+        <location filename="src/competitorswidget.cpp" line="221"/>
         <source>Edit Competitor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/competitorswidget.cpp" line="224"/>
+        <location filename="src/competitorswidget.cpp" line="226"/>
         <source>Save and &amp;next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/competitorswidget.cpp" line="259"/>
+        <location filename="src/competitorswidget.cpp" line="265"/>
         <source>Really delete all the selected competitors? This action cannot be reverted.</source>
         <oldsource>Realy delete all the selected competitors? This action cannot be reverted.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/competitorswidget.cpp" line="272"/>
+        <location filename="src/competitorswidget.cpp" line="278"/>
         <source>Confirm deletion of %1 competitors.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/competitorswidget.cpp" line="315"/>
+        <location filename="src/competitorswidget.cpp" line="321"/>
         <source>Set class in selected rows</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/competitorswidget.cpp" line="327"/>
+        <location filename="src/competitorswidget.cpp" line="333"/>
         <source>Dialog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/competitorswidget.cpp" line="328"/>
+        <location filename="src/competitorswidget.cpp" line="334"/>
         <source>Select class</source>
         <translation>Velg klasse</translation>
     </message>

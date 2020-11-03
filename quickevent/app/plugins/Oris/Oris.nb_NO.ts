@@ -62,12 +62,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisplugin.cpp" line="39"/>
+        <location filename="src/orisplugin.cpp" line="38"/>
         <source>&amp;Event</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisplugin.cpp" line="43"/>
+        <location filename="src/orisplugin.cpp" line="42"/>
         <source>&amp;Sync current event entries</source>
         <translation type="unfinished"></translation>
     </message>
@@ -77,22 +77,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisplugin.cpp" line="70"/>
+        <location filename="src/orisplugin.cpp" line="74"/>
         <source>&amp;Text file</source>
         <translation type="unfinished">&amp;Tekstfil</translation>
     </message>
     <message>
-        <location filename="src/orisplugin.cpp" line="73"/>
+        <location filename="src/orisplugin.cpp" line="80"/>
         <source>&amp;Competitors CSOS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisplugin.cpp" line="77"/>
+        <location filename="src/orisplugin.cpp" line="84"/>
         <source>Competitors C&amp;SV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisplugin.cpp" line="81"/>
+        <location filename="src/orisplugin.cpp" line="88"/>
         <source>&amp;Ranking CSV (ORIS format)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -100,52 +100,62 @@
 <context>
     <name>OrisImporter</name>
     <message>
-        <location filename="src/orisimporter.cpp" line="112"/>
+        <location filename="src/orisimporter.cpp" line="113"/>
         <source>JSON document parse error: %1 at: %2 near: %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisimporter.cpp" line="153"/>
+        <location filename="src/orisimporter.cpp" line="154"/>
         <source>Cannot find Oris import ID.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisimporter.cpp" line="320"/>
+        <location filename="src/orisimporter.cpp" line="321"/>
         <source>Import finished successfully.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisimporter.cpp" line="681"/>
+        <location filename="src/orisimporter.cpp" line="684"/>
         <source>New entries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisimporter.cpp" line="682"/>
+        <location filename="src/orisimporter.cpp" line="685"/>
         <source>Edited entries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisimporter.cpp" line="683"/>
+        <location filename="src/orisimporter.cpp" line="686"/>
         <source>Deleted entries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisimporter.cpp" line="686"/>
+        <location filename="src/orisimporter.cpp" line="689"/>
         <source>Oris import report</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisimporter.cpp" line="696"/>
+        <location filename="src/orisimporter.cpp" line="699"/>
         <source>Save without drops</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisimporter.cpp" line="760"/>
+        <location filename="src/orisimporter.cpp" line="754"/>
+        <source>Import ORIS Registrations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/orisimporter.cpp" line="754"/>
+        <source>Year of registration:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/orisimporter.cpp" line="768"/>
         <source>Importing registrations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/orisimporter.cpp" line="821"/>
+        <location filename="src/orisimporter.cpp" line="829"/>
         <source>Importing clubs</source>
         <translation type="unfinished"></translation>
     </message>

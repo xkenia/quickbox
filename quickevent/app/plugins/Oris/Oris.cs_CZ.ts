@@ -121,6 +121,14 @@
         <source>Import finished successfully.</source>
         <translation>Import byl úspěšně dokončen.</translation>
     </message>
+    <message>
+        <source>Import ORIS Registrations</source>
+        <translation>Importovat registrace z ORISu</translation>
+    </message>
+    <message>
+        <source>Year of registration:</source>
+        <translation>Registrace z roku:</translation>
+    </message>
 </context>
 <context>
     <name>TxtImporter</name>

@@ -33,7 +33,7 @@ namespace qfc = qf::core;
 namespace qfs = qf::core::sql;
 
 namespace {
-
+/*
 class BadDataInputException : public std::runtime_error
 {
 public:
@@ -44,7 +44,7 @@ public:
 private:
 	QString m_message;
 };
-
+*/
 class RunsModel : public quickevent::core::og::SqlTableModel
 {
 	Q_DECLARE_TR_FUNCTIONS(RunsModel)
@@ -184,6 +184,15 @@ CompetitorWidget::CompetitorWidget(QWidget *parent) :
 			});
 		}
 	}
+
+	// if there is only one run propagate widget SI card change from competitors to runs
+	connect(ui->edSiId, qOverload<int>(&QSpinBox::valueChanged),[=](int new_si_number) // widget SIcard edit box
+	{
+		if(eventPlugin()->stageCount() == 1 && m_runsModel->rowCount() == 1 ) {
+			m_runsModel->setValue(0, RunsModel::col_runs_siId, new_si_number); // update SI in runs model
+			ui->tblRuns->reset(); // reload ui to see the change
+		}
+	});
 }
 
 CompetitorWidget::~CompetitorWidget()
@@ -264,26 +273,52 @@ bool CompetitorWidget::load(const QVariant &id, int mode)
 	return false;
 }
 
-QString CompetitorWidget::classNameFromRegistration(const QString &registration)
+QString CompetitorWidget::guessClassFromRegistration(const QString &registration)
 {
+	// get list of classes without preceding letter - eg. 12,14,18,21,35,..
+	QVector<int> classes;
+	for (int i = 0; i < ui->cbxClass->count(); ++i)
+	{
+		QString class_name = ui->cbxClass->itemText(i);
+		int age = class_name.mid(1, 2).toInt();
+		classes << age;
+	}
+	std::sort(classes.begin(), classes.end());
+
+	// get runner age
 	qfLogFuncFrame() << registration;
-	QString reg = registration.mid(3);
-	int year = registration.mid(3, 2).toInt() + 1900;
 	int curr_year = QDate::currentDate().year();
-	int age = curr_year - year;
-	if(age >= 100)
-		age -= 100;
-	qfDebug() << "\t age:" << age;
-	QChar c = (registration.mid(5, 1).toInt() == 5)? 'D': 'H';
-	for(int y : juniorAges()) {
-		if(y >= age)
-			return c + QString::number(y);
+	int runner_age = curr_year - 1900 - registration.mid(3, 2).toInt();
+	if(runner_age >= 100)
+		runner_age -= 100;
+	qfDebug() << "\t age:" << runner_age;
+
+	// try to guess gender prefix - D or H
+	char gender = (registration.mid(5, 1).toInt() >= 5)? 'D': 'H';
+
+	// go trough classes, if runner age >= class then asign
+	// reverse array order and comparison for juniors
+	// eg. classes 35, 40, 45, age 38 -> 35
+	// eg. classes 12, 14, 16, age 15 -> 16
+	int candidate = 0;
+	if (runner_age > 21)
+	{
+		for(int cls : classes)
+		{
+			if(runner_age >= cls)
+				candidate = cls;
+		}
 	}
-	for(int y : veteranAges()) {
-		if(age >= y)
-			return c + QString::number(y);
+	else
+	{
+		std::reverse(classes.begin(), classes.end());
+		for(int cls : classes)
+		{
+			if(runner_age <= cls)
+				candidate = cls;
+		}
 	}
-	return QString();
+	return candidate ? gender + QString::number(candidate) : QString();
 }
 
 void CompetitorWidget::showRunsTable(int stage_id)
@@ -310,13 +345,14 @@ void CompetitorWidget::showRunsTable(int stage_id)
 void CompetitorWidget::onRegistrationSelected(const QVariantMap &values)
 {
 	qfLogFuncFrame();
-	qf::core::model::DataDocument*doc = dataController()->document();
+	auto *doc = dataController()->document();
 	for(auto s : {"firstname", "lastname", "registration", "licence", "siid"}) {
 		qfDebug() << "\t" << s << "->" << values.value(s);
 		doc->setValue(s, values.value(s));
 	}
-	if(!doc->isDirty(QStringLiteral("classId"))) {
-		QString class_name_prefix = classNameFromRegistration(values.value("registration").toString());
+	// if no class is set, guess class from registration
+	if(ui->cbxClass->currentText().isEmpty()) {
+		QString class_name_prefix = guessClassFromRegistration(values.value("registration").toString());
 		if(!class_name_prefix.isEmpty()) {
 			for (int i = 0; i < ui->cbxClass->count(); ++i) {
 				QString class_name = ui->cbxClass->itemText(i);
@@ -338,8 +374,7 @@ void CompetitorWidget::loadFromRegistrations(int siid)
 		onRegistrationSelected(vals);
 	}
 	else {
-		qf::core::model::DataDocument*doc = dataController()->document();
-		doc->setValue(QStringLiteral("competitors.siid"), siid);
+		dataController()->document()->setValue(QStringLiteral("competitors.siid"), siid);
 	}
 }
 
@@ -351,57 +386,9 @@ bool CompetitorWidget::saveData()
 		qf::qmlwidgets::dialogs::MessageBox::showWarning(this, tr("Class should be entered."));
 		return false;
 	}
-	qf::core::model::DataDocument::EditState edit_state = doc->saveEditState();
-	bool ret = false;
-	try {
-		qf::core::sql::Transaction transaction;
-		//doc->setSaveSiidToRuns(true);
-		if(Super::saveData())
-			ret = saveRunsTable();
-		transaction.commit();
-	}
-	catch (BadDataInputException &e) {
-		qf::qmlwidgets::dialogs::MessageBox::showError(this, e.message());
-	}
-	catch (qf::core::Exception &e) {
-		QString what = e.message();
-		if(what.contains(QLatin1String("runs.stageId")) && what.contains(QLatin1String("runs.siId"))) {
-			// "UNIQUE constraint failed: runs.stageId, runs.siId Unable to fetch row"
-			// duplicate SI insertion attempt
-			qf::qmlwidgets::dialogs::MessageBox::showError(this, tr("Duplicate SI inserted."));
-		}
-		else {
-			qf::qmlwidgets::dialogs::MessageBox::showException(this, e);
-		}
-		doc->restoreEditState(edit_state);
-	}
-	return ret;
-}
-
-QVector<int> CompetitorWidget::juniorAges()
-{
-	QVector<int> ret;
-	for (int i = 0; i < ui->cbxClass->count(); ++i) {
-		QString class_name = ui->cbxClass->itemText(i);
-		int age = class_name.mid(1, 2).toInt();
-		if(age > 0 && age < 21)
-			ret << age;
-	}
-	std::sort(ret.begin(), ret.end());
-	return ret;
-}
-
-QVector<int> CompetitorWidget::veteranAges()
-{
-	QVector<int> ret;
-	for (int i = 0; i < ui->cbxClass->count(); ++i) {
-		QString class_name = ui->cbxClass->itemText(i);
-		int age = class_name.mid(1, 2).toInt();
-		if(age > 0 && age >= 21)
-			ret << age;
-	}
-	std::sort(ret.begin(), ret.end(), std::greater<int>());
-	return ret;
+	if(Super::saveData())
+		return saveRunsTable();
+	return false;
 }
 
 

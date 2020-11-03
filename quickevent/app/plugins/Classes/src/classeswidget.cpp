@@ -1,7 +1,7 @@
 #include "classeswidget.h"
 #include "ui_classeswidget.h"
 
-#include "coursedef.h"
+#include "importcoursedef.h"
 #include "editcodeswidget.h"
 #include "editcourseswidget.h"
 #include "drawing/drawingganttwidget.h"
@@ -31,6 +31,12 @@
 #include <QDomDocument>
 #include <QComboBox>
 #include <QStyledItemDelegate>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+static const auto SkipEmptyParts = QString::SkipEmptyParts;
+#else
+static const auto SkipEmptyParts = Qt::SkipEmptyParts;
+#endif
 
 namespace qfc = qf::core;
 namespace qfw = qf::qmlwidgets;
@@ -89,13 +95,60 @@ public:
 		QMapIterator<int, QString> it(m_idToCourseName);
 		while(it.hasNext()) {
 			it.next();
-			m_courseNameToId.insertMulti(it.value(), it.key());
+			m_courseNameToId.insert(it.value(), it.key());
 		}
 	}
 
 private:
 	QMap<int, QString> m_idToCourseName;
 	QMultiMap<QString, int> m_courseNameToId;
+};
+
+class CourseCodesTableModel : public qfm::SqlTableModel
+{
+	using Super = qfm::SqlTableModel;
+public:
+	enum Columns {
+		col_position,
+		col_control_type,
+		col_code,
+		col_altCode,
+		col_outOfOrder,
+		col_radio,
+		col_longitude,
+		col_latitude,
+		col_COUNT
+	};
+
+	CourseCodesTableModel(QObject *parent) : Super(parent)
+	{
+		clearColumns(col_COUNT);
+		setColumn(col_position, ColumnDefinition("coursecodes.position", tr("Pos")).setReadOnly(true));
+		setColumn(col_control_type, ColumnDefinition("control_type", tr("Type", "control type")).setToolTip(tr("Control type")).setReadOnly(true));
+		setColumn(col_code, ColumnDefinition("codes.code", tr("Code")).setReadOnly(true));
+		setColumn(col_altCode, ColumnDefinition("codes.altCode", tr("Alt")).setToolTip(tr("Code alternative")));
+		setColumn(col_outOfOrder, ColumnDefinition("codes.outOfOrder", tr("O")).setToolTip(tr("Out of order")));
+		setColumn(col_radio, ColumnDefinition("codes.radio", tr("R")).setToolTip(tr("Radio")));
+		setColumn(col_longitude, ColumnDefinition("codes.longitude", tr("Long")).setToolTip(tr("Longitude")));
+		setColumn(col_latitude, ColumnDefinition("codes.latitude", tr("Lat")).setToolTip(tr("Latitude")));
+	}
+
+	// QAbstractItemModel interface
+public:
+	QVariant data(const QModelIndex &index, int role) const override
+	{
+		if(index.column() == col_control_type) {
+			if(role == Qt::DisplayRole) {
+				QModelIndex ix = index.sibling(index.row(), col_code);
+				int code = ix.data().toInt();
+				using CodeDef = quickevent::core::CodeDef;
+				if(CodeDef::codeToType(code) != CodeDef::Type::Control)
+					return CodeDef::codeToString(code);
+			}
+			return QVariant();
+		}
+		return Super::data(index, role);
+	}
 };
 
 static Event::EventPlugin* eventPlugin()
@@ -155,16 +208,7 @@ ClassesWidget::ClassesWidget(QWidget *parent) :
 		ui->tblCourseCodes->setCloneRowEnabled(false);
 		ui->tblCourseCodes->setRemoveRowEnabled(false);
 		ui->tblCourseCodesTB->setTableView(ui->tblCourseCodes);
-		qfm::SqlTableModel *m = new qfm::SqlTableModel(this);
-		//m->setObjectName("classes.coursesModel");
-		m->addColumn("coursecodes.position", tr("Pos")).setReadOnly(true);
-		m->addColumn("codes.type", tr("Type", "control type")).setToolTip(tr("Control type"));
-		m->addColumn("codes.code", tr("Code")).setReadOnly(true);
-		m->addColumn("codes.altCode", tr("Alt")).setToolTip(tr("Code alternative")).setReadOnly(false);
-		m->addColumn("codes.outOfOrder", tr("O")).setToolTip(tr("Out of order"));
-		m->addColumn("codes.radio", tr("R")).setToolTip(tr("Radio"));
-		m->addColumn("codes.longitude", tr("Long")).setToolTip(tr("Longitude"));
-		m->addColumn("codes.latitude", tr("Lat")).setToolTip(tr("Latitude"));
+		qfm::SqlTableModel *m = new CourseCodesTableModel(this);
 		ui->tblCourseCodes->setTableModel(m);
 		m_courseCodesModel = m;
 	}
@@ -360,6 +404,7 @@ void ClassesWidget::reloadCourseCodes()
 		qfs::QueryBuilder qb;
 		qb.select2("codes", "*")
 				.select2("coursecodes", "position")
+				.select("'' AS control_type")
 				.from("coursecodes")
 				.join("coursecodes.codeId", "codes.id")
 				.where("coursecodes.courseId=" QF_IARG(current_course_id))
@@ -369,7 +414,7 @@ void ClassesWidget::reloadCourseCodes()
 	}
 }
 
-void ClassesWidget::importCourses(const QList<CourseDef> &course_defs, const QList<quickevent::core::CodeDef> &code_defs)
+void ClassesWidget::importCourses(const QList<ImportCourseDef> &course_defs, const QList<quickevent::core::CodeDef> &code_defs)
 {
 	qf::qmlwidgets::framework::MainWindow *fwk = qf::qmlwidgets::framework::MainWindow::frameWork();
 	auto *event_plugin = qobject_cast<Event::EventPlugin *>(fwk->plugin("Event"));
@@ -377,13 +422,15 @@ void ClassesWidget::importCourses(const QList<CourseDef> &course_defs, const QLi
 	if(event_plugin && classes_plugin) {
 		QString msg = tr("Delete all courses definitions for stage %1?").arg(selectedStageId());
 		if(qfd::MessageBox::askYesNo(fwk, msg, false)) {
+			/*
 			QVariantList courses;
 			for(const auto &cd : course_defs)
 				courses << cd;
 			QVariantList codes;
 			for(const auto &cd : code_defs)
 				codes << cd;
-			classes_plugin->createCourses(selectedStageId(), courses, codes);
+			*/
+			classes_plugin->createCourses(selectedStageId(), course_defs, code_defs);
 			reload();
 		}
 	}
@@ -415,14 +462,14 @@ void ClassesWidget::import_ocad_txt()
 			lines << QString::fromUtf8(ba).trimmed();
 		}
 		try {
-			QMap<QString, CourseDef> defined_courses_map;
+			QMap<QString, ImportCourseDef> defined_courses_map;
 			enum {ColCourseName = 0, ColLenght, ColClimb, ColCodesCount, ColCodes};
 			for(QString line : lines) {
 				// coursename lenght_km climb codes_count S1-code_1[-code_n]-F1
 				if(line.isEmpty())
 					continue;
 
-				QStringList sections = line.split('\t', QString::SkipEmptyParts);
+				QStringList sections = line.split('\t', SkipEmptyParts);
 				QStringList class_names;
 
 				qfc::String course_name = normalize_course_name(sections.value(ColCourseName));
@@ -434,12 +481,12 @@ void ClassesWidget::import_ocad_txt()
 					continue;
 				}
 				if(defined_courses_map.contains(course_name)) {
-					CourseDef cd = defined_courses_map.value(course_name);
+					ImportCourseDef cd = defined_courses_map.value(course_name);
 					QStringList classes = cd.classes() << class_names;
 					defined_courses_map[course_name].setClasses(classes);
 					continue;
 				}
-				CourseDef &cd = defined_courses_map[course_name];
+				ImportCourseDef &cd = defined_courses_map[course_name];
 				cd.setName(course_name);
 				cd.setClasses(class_names);
 				{
@@ -457,12 +504,7 @@ void ClassesWidget::import_ocad_txt()
 					QStringList sl = s.split('-');
 					cd.setStartId(sl[0]);
 					for (int i = 1; i < sl.count()-1; i++) {
-						bool ok;
-						int code = sl[i].toInt(&ok);
-						if(ok)
-							codes << code;
-						else
-							QF_EXCEPTION(QString("Invalid code definition '%1' at sequence no: %2 in '%3'\nline: %4").arg(sl[i+1]).arg(i).arg(s).arg(line));
+						codes << quickevent::core::CodeDef::codeFromString(sl[i]);
 					}
 					cd.setCodes(codes);
 				}
@@ -492,7 +534,7 @@ void ClassesWidget::import_ocad_v8()
 		}
 		try {
 			bool is_relays = eventPlugin()->eventConfig()->isRelays();
-			QMap<QString, CourseDef> defined_courses_map;
+			QMap<QString, ImportCourseDef> defined_courses_map;
 			for(QString line : lines) {
 				// [classname];coursename;[relay.leg];lenght_km;climb;S1;dist_1;code_1[;dist_n;code_n];dist_finish;F1
 				if(line.isEmpty())
@@ -529,12 +571,12 @@ void ClassesWidget::import_ocad_v8()
 					}
 				}
 				if(defined_courses_map.contains(course_name)) {
-					CourseDef cd = defined_courses_map.value(course_name);
+					ImportCourseDef cd = defined_courses_map.value(course_name);
 					QStringList classes = cd.classes() << class_names;
 					defined_courses_map[course_name].setClasses(classes);
 					continue;
 				}
-				CourseDef &cd = defined_courses_map[course_name];
+				ImportCourseDef &cd = defined_courses_map[course_name];
 				cd.setName(course_name);
 				cd.setClasses(class_names);
 				{
@@ -553,12 +595,7 @@ void ClassesWidget::import_ocad_v8()
 					QVariantList codes;
 					QStringList sl = s.splitAndTrim(';');
 					for (int i = 0; i < sl.count()-2; i+=2) {
-						bool ok;
-						int code = sl[i+1].toInt(&ok);
-						if(ok)
-							codes << code;
-						else
-							QF_EXCEPTION(QString("Invalid code definition '%1' at sequence no: %2 in '%3'\nline: %4").arg(sl[i+1]).arg(i).arg(s).arg(line));
+						codes << quickevent::core::CodeDef::codeFromString(sl[i+1]);
 					}
 					cd.setCodes(codes);
 				}
@@ -604,12 +641,12 @@ void ClassesWidget::import_ocad_iofxml_2()
 
 			QDomNodeList xml_courses = xdoc.elementsByTagName(QStringLiteral("Course"));
 
-			QList<CourseDef> defined_courses_list;
+			QList<ImportCourseDef> defined_courses_list;
 			for (int i = 0; i < xml_courses.count(); ++i) {
 				QDomElement el_course = xml_courses.at(i).toElement();
 				if(el_course.isNull())
 					QF_EXCEPTION(QString("Xml file format error: bad element '%1'").arg("Course"));
-				CourseDef coursedef;
+				ImportCourseDef coursedef;
 				QString course_name = normalize_course_name(element_text(el_course, QStringLiteral("CourseName")));
 				coursedef.setName(course_name);
 
@@ -636,10 +673,8 @@ void ClassesWidget::import_ocad_iofxml_2()
 					int no = element_text(el_control, QStringLiteral("Sequence")).trimmed().toInt();
 					if(no <= 0)
 						QF_EXCEPTION(QString("Xml file format error: bad sequence number %1 in %2").arg(no).arg(dump_element(el_control)));
-					int code = element_text(el_control, QStringLiteral("ControlCode")).trimmed().toInt();
-					if(code <= 0)
-						QF_EXCEPTION(QString("Xml file format error: bad control code %1 in %2").arg(code).arg(dump_element(el_control)));
-					codes[no] = code;
+					auto code_str = element_text(el_control, QStringLiteral("ControlCode")).trimmed();
+					codes[no] = quickevent::core::CodeDef::codeFromString(code_str);
 				}
 				coursedef.setCodes(codes.values());
 				defined_courses_list << coursedef;
@@ -676,33 +711,15 @@ void ClassesWidget::import_ocad_iofxml_3()
 				for (QDomElement el_code = el_course_data.firstChildElement(CONTROL); !el_code.isNull(); el_code = el_code.nextSiblingElement(CONTROL)) {
 					quickevent::core::CodeDef codedef;
 					QString code_str = element_text(el_code, QStringLiteral("Id")).trimmed();
-					bool ok;
-					int code = 0;
-					if(code_str.startsWith(quickevent::core::CodeDef::CONTROL_TYPE_START)) {
-						code = code_str.mid(1).toInt(&ok);
-						codedef.setType(quickevent::core::CodeDef::CONTROL_TYPE_START);
-					}
-					else if(code_str.startsWith(quickevent::core::CodeDef::CONTROL_TYPE_FINISH)) {
-						code = code_str.mid(1).toInt(&ok);
-						codedef.setType(quickevent::core::CodeDef::CONTROL_TYPE_FINISH);
-					}
-					else {
-						code = code_str.toInt(&ok);
-					}
-					if(ok) {
-						codedef.setCode(code);
-						QDomElement el_pos = el_code.firstChildElement(QStringLiteral("Position"));
-						codedef.setLongitude(el_pos.attribute(QStringLiteral("lng")).trimmed().toDouble());
-						codedef.setLatitude(el_pos.attribute(QStringLiteral("lat")).trimmed().toDouble());
-						qfDebug() << "adding code:" << codedef.toString();
-						defined_codes << codedef;
-					}
-					else {
-						qfError() << "Invalid code" << code_str << "will be ignored";
-					}
+					codedef.setCode(code_str);
+					QDomElement el_pos = el_code.firstChildElement(QStringLiteral("Position"));
+					codedef.setLongitude(el_pos.attribute(QStringLiteral("lng")).trimmed().toDouble());
+					codedef.setLatitude(el_pos.attribute(QStringLiteral("lat")).trimmed().toDouble());
+					qfDebug() << "adding code:" << codedef.toString();
+					defined_codes << codedef;
 				}
 			}
-			QMap<QString, CourseDef> defined_courses;
+			QMap<QString, ImportCourseDef> defined_courses;
 			{
 				QDomNodeList ndlst = xdoc.elementsByTagName(QStringLiteral("Course"));
 				for (int i = 0; i < ndlst.count(); ++i) {
@@ -712,7 +729,7 @@ void ClassesWidget::import_ocad_iofxml_3()
 					QString course_name = normalize_course_name(element_text(el_course, QStringLiteral("Name")));
 					if(course_name.isEmpty())
 						QF_EXCEPTION(QString("Xml file format error: empty course name in '%1'").arg(dump_element(el_course)));
-					CourseDef &coursedef = defined_courses[course_name];
+					ImportCourseDef &coursedef = defined_courses[course_name];
 					coursedef.setName(course_name);
 					coursedef.setLenght(element_text(el_course, QStringLiteral("Length")).trimmed().toInt());
 					coursedef.setClimb(element_text(el_course, QStringLiteral("Climb")).trimmed().toInt());
@@ -725,24 +742,7 @@ void ClassesWidget::import_ocad_iofxml_3()
 						//		continue;
 						QString code_str = element_text(el_control, QStringLiteral("Control")).trimmed();
 						qfDebug() << code_str;
-						/*
-						int code = 0;
-						bool ok;
-						if(code_str.startsWith(quickevent::core::CodeDef::CONTROL_TYPE_START)) {
-							code = code_str.mid(1).toInt(&ok);
-						}
-						else if(code_str.startsWith(quickevent::core::CodeDef::CONTROL_TYPE_FINISH)) {
-							code = code_str.mid(1).toInt(&ok);
-						}
-						else {
-							code = code_str.toInt(&ok);
-						}
-						if(ok)
-							codes << code;
-						else
-							qfError() << QString("Xml file format error: bad control code %1 in %2").arg(code).arg(dump_element(el_control));
-						*/
-						codes << code_str;
+						codes << quickevent::core::CodeDef::codeFromString(code_str);
 					}
 					coursedef.setCodes(codes);
 				}
@@ -755,16 +755,16 @@ void ClassesWidget::import_ocad_iofxml_3()
 					QString class_name = element_text(class_assignment, QStringLiteral("ClassName"));
 					if(class_name.isEmpty())
 						QF_EXCEPTION(QString("Xml file format error: empty class name in '%1'").arg(dump_element(class_assignment)));
-					CourseDef &coursedef = defined_courses[course_name];
+					ImportCourseDef &coursedef = defined_courses[course_name];
 					coursedef.addClass(class_name);
 				}
 			}
 			{
 				// guess empty class names from course name
-				QMutableMapIterator<QString, CourseDef> it(defined_courses);
+				QMutableMapIterator<QString, ImportCourseDef> it(defined_courses);
 				while(it.hasNext()) {
 					it.next();
-					CourseDef &cd = it.value();
+					ImportCourseDef &cd = it.value();
 					if(cd.classes().isEmpty())
 						cd.setClasses(QStringList() << cd.name());
 				}
@@ -773,10 +773,10 @@ void ClassesWidget::import_ocad_iofxml_3()
 				// split combined class names
 				bool split_class_names_enabled = false;
 				bool split_class_names_prompted = false;
-				QMutableMapIterator<QString, CourseDef> it(defined_courses);
+				QMutableMapIterator<QString, ImportCourseDef> it(defined_courses);
 				while(it.hasNext()) {
 					it.next();
-					CourseDef &cd = it.value();
+					ImportCourseDef &cd = it.value();
 					QStringList class_names = cd.classes();
 					QStringList split_class_names;
 					for(const QString &class_name : class_names) {
