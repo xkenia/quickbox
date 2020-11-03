@@ -46,6 +46,12 @@ namespace qfs = qf::core::sql;
 
 namespace Runs {
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+static const auto SkipEmptyParts = QString::SkipEmptyParts;
+#else
+static const auto SkipEmptyParts = Qt::SkipEmptyParts;
+#endif
+
 static Event::EventPlugin* eventPlugin()
 {
 	qf::qmlwidgets::framework::MainWindow *fwk = qf::qmlwidgets::framework::MainWindow::frameWork();
@@ -83,7 +89,7 @@ const qf::core::utils::Table &RunsPlugin::runnersTable(int stage_id)
 		qfs::QueryBuilder qb;
 		qb.select2("competitors", "registration")
 				.select("COALESCE(lastName, '') || ' ' || COALESCE(firstName, '') AS competitorName")
-				.select2("runs", "id, siId")
+				.select2("runs", "id, siId, competitorId")
 				.select("runs.id AS runId")
 				.select2("classes", "name")
 				.from("competitors")
@@ -230,26 +236,24 @@ quickevent::core::CourseDef RunsPlugin::courseForCourseId(int course_id)
 		q.exec(qb.toString(), qf::core::Exception::Throw);
 		while (q.next()) {
 			quickevent::core::CodeDef cd(q.values());
-			const QString control_type = cd.type();
-			if(control_type == quickevent::core::CodeDef::CONTROL_TYPE_START) {
+			quickevent::core::CodeDef::Type control_type = cd.type();
+			if(control_type == quickevent::core::CodeDef::Type::Start) {
 				start_code = cd;
 			}
-			else if(control_type == quickevent::core::CodeDef::CONTROL_TYPE_FINISH) {
+			else if(control_type == quickevent::core::CodeDef::Type::Finish) {
 				finish_code = cd;
 			}
-			else if(control_type.isEmpty()) {
+			else if(control_type == quickevent::core::CodeDef::Type::Control) {
 				codes << cd;
 			}
 		}
 	}
 
-	if (finish_code.isEmpty()) {
-		finish_code.setType(quickevent::core::CodeDef::CONTROL_TYPE_FINISH);
-	}
-	// whatever code is imported, QE is using 999 everywhere
-	finish_code.setCode(quickevent::core::CodeDef::FINISH_PUNCH_CODE);
+	if (finish_code.code() < quickevent::core::CodeDef::FINISH_PUNCH_CODE)
+		finish_code.setCode(quickevent::core::CodeDef::FINISH_PUNCH_CODE);
 
-	/*if(including_distance)*/ {
+	/*if(including_distance)*/
+	{
 		int course_len = 0;
 		quickevent::core::CodeDef prev_cd = start_code;
 		for (int i = 0; i < codes.count(); ++i) {
@@ -1057,7 +1061,7 @@ qf::core::utils::TreeTable RunsPlugin::startListClassesTable(const QString &wher
 	qfs::QueryBuilder qb;
 	qb.select2("classes", "id, name")
 		.select2("classdefs", "startTimeMin, lastStartTimeMin, startIntervalMin")
-		.select2("courses", "length, climb, startId")
+		.select2("courses", "length, climb, id")
 		.from("classes")
 		.joinRestricted("classes.id", "classdefs.classId", "classdefs.stageId={{stage_id}}")
 		.join("classdefs.courseId", "courses.id")
@@ -1074,6 +1078,7 @@ qf::core::utils::TreeTable RunsPlugin::startListClassesTable(const QString &wher
 	tt.setValue("stageId", stage_id);
 	tt.setValue("event", event_plugin->eventConfig()->value("event"));
 	tt.setValue("stageStart", event_plugin->stageStartDateTime(stage_id));
+	tt.appendColumn("courses.numberOfControls", QVariant::Type::Int);
 
 	qfs::QueryBuilder qb2;
 	qb2.select2("competitors", "lastName, firstName, registration, startNumber")
@@ -1085,6 +1090,20 @@ qf::core::utils::TreeTable RunsPlugin::startListClassesTable(const QString &wher
 		.orderBy("runs.startTimeMs, competitors.lastName");
 	for(int i=0; i<tt.rowCount(); i++) {
 		qf::core::utils::TreeTableRow tt_row = tt.row(i);
+		// add number of controls
+		QString query_str = "SELECT COUNT(*) FROM codes,coursecodes"
+					" WHERE codes.id=coursecodes.codeId"
+					" AND codes.code>=" QF_IARG(quickevent::core::CodeDef::PUNCH_CODE_MIN)
+					" AND codes.code<=" QF_IARG(quickevent::core::CodeDef::PUNCH_CODE_MAX)
+					" AND coursecodes.courseId=" QF_IARG(tt_row.value("courses.id").toInt());
+		qf::core::sql::Query q;
+		q.exec(query_str, qf::core::Exception::Throw);
+		if (q.next()) {
+			QVariant num_of_controls = q.value(0).toInt();
+			tt_row.setValue(QStringLiteral("courses.numberOfControls"), num_of_controls);
+			tt.setRow(i, tt_row);
+		}
+
 		int class_id = tt_row.value(QStringLiteral("classes.id")).toInt();
 		//console.debug("class id:", class_id);
 		qpm["class_id"] = class_id;
@@ -1096,10 +1115,6 @@ qf::core::utils::TreeTable RunsPlugin::startListClassesTable(const QString &wher
 		int start_time_0 = tt_row.value(QStringLiteral("startTimeMin")).toInt() * 60 * 1000;
 		int start_time_last = tt_row.value(QStringLiteral("lastStartTimeMin")).toInt() * 60 * 1000;
 		int start_interval = tt_row.value(QStringLiteral("startIntervalMin")).toInt() * 60 * 1000;
-//INFO pridani vypisu identifikace startu
-		QString start_id = tt_row.value(QStringLiteral("startId")).toString();
-		tt2.setValue("startId", start_id);
-
 		if(start_interval > 0 && insert_vacants) {
 			for(int j=0; j<tt2.rowCount(); j++) {
 				qf::core::utils::TreeTableRow tt2_row = tt2.row(j);
@@ -1352,7 +1367,8 @@ void RunsPlugin::report_startListClubs()
 	dlg.setPersistentSettingsId("startListClubsReportOptions");
 	dlg.loadPersistentSettings();
 	dlg.setClassFilterVisible(false);
-	dlg.setStartListOptionsVisible(false);
+	dlg.setStartListOptionsVisible(true);
+	dlg.setStartListPrintVacantsVisible(false);
 	dlg.setPageLayoutVisible(false);
 	if(dlg.exec()) {
 		auto tt = startListClubsTable();
@@ -1376,7 +1392,8 @@ void RunsPlugin::report_startListStarters()
 	dlg.setPersistentSettingsId("startListStartersReportOptions");
 	dlg.loadPersistentSettings();
 	dlg.setClassFilterVisible(true);
-	dlg.setStartListOptionsVisible(false);
+	dlg.setStartListOptionsVisible(true);
+	dlg.setStartListPrintVacantsVisible(false);
 	dlg.setStartersOptionsVisible(true);
 	if(dlg.exec()) {
 		auto tt = startListStartersTable(dlg.sqlWhereExpression());
@@ -1419,7 +1436,7 @@ void RunsPlugin::report_startListClassesNStages()
 		qf::qmlwidgets::reports::ReportViewWidget::showReport(fwk
 									, manifest()->homeDir() + "/reports/startList_classes_nstages.qml"
 									, tt.toVariant()
-									, tr("Start list by classes after %1 stages").arg(dlg.stagesCount())
+									, tr("Start list by classes for %n stage(s)", "", dlg.stagesCount())
 									, "printStartList"
 									, props
 									);
@@ -1435,8 +1452,8 @@ void RunsPlugin::report_startListClubsNStages()
 	dlg.loadPersistentSettings();
 
 	dlg.setStagesCount(event_plugin->stageCount());
-	dlg.setStartListOptionsVisible(false);
-	//dlg.setVacantsVisible(false);
+	dlg.setStartListOptionsVisible(true);
+	dlg.setVacantsVisible(false);
 	dlg.setStagesOptionVisible(true);
 	dlg.setClassFilterVisible(false);
 	dlg.setClassFilterVisible(true);
@@ -1453,7 +1470,7 @@ void RunsPlugin::report_startListClubsNStages()
 		qf::qmlwidgets::reports::ReportViewWidget::showReport(fwk
 									, manifest()->homeDir() + "/reports/startList_clubs_nstages.qml"
 									, tt.toVariant()
-									, tr("Start list by clubs after %1 stages").arg(dlg.stagesCount())
+									, tr("Start list by clubs for %n stage(s)", "", dlg.stagesCount())
 									, "printStartList"
 									, props
 									);
@@ -1470,7 +1487,7 @@ void RunsPlugin::report_resultsClasses()
 	dlg.setResultOptionsVisible(true);
 	//dlg.setPageLayoutVisible(false);
 	if(dlg.exec()) {
-		auto tt = currentStageResultsTable(dlg.sqlWhereExpression(), dlg.resultNumPlaces());
+		auto tt = currentStageResultsTable(dlg.sqlWhereExpression(), dlg.resultNumPlaces(), dlg.options().isResultExcludeDisq());
 		auto opts = dlg.optionsMap();
 		QVariantMap props;
 		props["options"] = opts;
@@ -1494,7 +1511,7 @@ void RunsPlugin::report_resultsForSpeaker()
 	dlg.setResultOptionsVisible(true);
 	//dlg.setPageLayoutVisible(false);
 	if(dlg.exec()) {
-		auto tt = currentStageResultsTable(dlg.sqlWhereExpression(), dlg.resultNumPlaces());
+		auto tt = currentStageResultsTable(dlg.sqlWhereExpression(), dlg.resultNumPlaces(), dlg.options().isResultExcludeDisq());
 		auto opts = dlg.optionsMap();
 		QVariantMap props;
 		props["options"] = opts;
@@ -1555,7 +1572,7 @@ void RunsPlugin::report_resultsNStages()
 	qf::qmlwidgets::reports::ReportViewWidget::showReport(fwk
 								, manifest()->homeDir() + "/reports/results_nstages.qml"
 								, tt.toVariant()
-								, tr("Results after %1 stages").arg(dlg.stagesCount())
+								, tr("Results after %n stage(s)", "", dlg.stagesCount())
 								, "printResultsNStages"
 								, props
 							  );
@@ -1582,7 +1599,7 @@ void RunsPlugin::report_resultsNStagesSpeaker()
 	qf::qmlwidgets::reports::ReportViewWidget::showReport(fwk
 								, manifest()->homeDir() + "/reports/results_nstagesSpeaker.qml"
 								, tt.toVariant()
-								, tr("Results after %1 stages").arg(dlg.stagesCount())
+								, tr("Results after %n stage(s)", "", dlg.stagesCount())
 								, "printResultsNStagesWide"
 								, props
 														  );
@@ -1605,7 +1622,7 @@ void RunsPlugin::report_nStagesAwards()
 	qf::qmlwidgets::reports::ReportViewWidget::showReport(fwk
 								, rep_path
 								, tt.toVariant()
-								, tr("Awards after %1 stages").arg(opts.value("numPlaces").toInt())
+								, tr("Awards after %1 stages").arg(opts.value("stageId").toInt())
 								, "printResultsAwardsNStages"
 								, props
 								);
@@ -2074,8 +2091,8 @@ bool RunsPlugin::exportStartListStageIofXml30(int stage_id, const QString &file_
 	append_list(xml_event, QVariantList{"Name", event_config->eventName()});
 	append_list(xml_event, QVariantList{"StartTime", QVariantList{"Date", event_config->eventDateTime().toUTC().date().toString(Qt::ISODate)}, QVariantList{"Time", event_config->eventDateTime().time().toString(Qt::ISODate)}});
 	append_list(xml_event, QVariantList{"EndTime", QVariantList{"Date", event_config->eventDateTime().toUTC().date().toString(Qt::ISODate)}, QVariantList{"Time", event_config->eventDateTime().time().toString(Qt::ISODate)}});
-	QStringList director = event_config->director().split(' ', QString::SkipEmptyParts);
-	QStringList main_referee = event_config->mainReferee().split(' ', QString::SkipEmptyParts);
+	QStringList director = event_config->director().split(' ', SkipEmptyParts);
+	QStringList main_referee = event_config->mainReferee().split(' ', SkipEmptyParts);
 	append_list(xml_event, QVariantList{"Official", QVariantMap{{"type", "Director"}}, QVariantList{"Person", QVariantList{"Name", QVariantList{"Family", director.value(0)}, QVariantList{"Given", director.value(1)}}}});
 	append_list(xml_event, QVariantList{"Official", QVariantMap{{"type", "MainReferee"}}, QVariantList{"Person", QVariantList{"Name", QVariantList{"Family", main_referee.value(0)}, QVariantList{"Given", main_referee.value(1)}}}});
 	append_list(xml_root, xml_event);
@@ -2084,8 +2101,10 @@ bool RunsPlugin::exportStartListStageIofXml30(int stage_id, const QString &file_
 		qf::core::utils::TreeTableRow tt1_row = tt1.row(i);
 		QVariantList class_start{"ClassStart"};
 		append_list(class_start, QVariantList{"Class", QVariantList{"Id", tt1_row.value(QStringLiteral("classes.id"))}, QVariantList{"Name", tt1_row.value(QStringLiteral("classes.name"))}});
-		append_list(class_start, QVariantList{"Course", QVariantList{"Length", tt1_row.value(QStringLiteral("courses.length"))}, QVariantList{"Climb", tt1_row.value(QStringLiteral("courses.climb"))}});
-		append_list(class_start, QVariantList{"StartName", tt1_row.value(QStringLiteral("courses.startId"))});
+		append_list(class_start, QVariantList{"Course", QVariantList{"Length", tt1_row.value(QStringLiteral("courses.length"))},
+								QVariantList{"Climb", tt1_row.value(QStringLiteral("courses.climb"))},
+								QVariantList{"NumberOfControls", tt1_row.value(QStringLiteral("courses.numberOfControls"))}});
+		append_list(class_start, QVariantList{"StartName", "Start1"});
 		qf::core::utils::TreeTable tt2 = tt1_row.table();
 		int pos = 0;
 		for(int j=0; j<tt2.rowCount(); j++) {
