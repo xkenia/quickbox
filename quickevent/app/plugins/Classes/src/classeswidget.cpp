@@ -31,6 +31,7 @@
 #include <QDomDocument>
 #include <QComboBox>
 #include <QStyledItemDelegate>
+#include <QTextStream>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
 static const auto SkipEmptyParts = QString::SkipEmptyParts;
@@ -106,6 +107,8 @@ private:
 
 class CourseCodesTableModel : public qfm::SqlTableModel
 {
+	Q_OBJECT
+private:
 	using Super = qfm::SqlTableModel;
 public:
 	enum Columns {

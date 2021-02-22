@@ -111,7 +111,7 @@ ReportItemReport* ReportProcessor::documentInstanceRoot()
 			m_documentInstanceRoot = qobject_cast<ReportItemReport*>(o);
 		}
 		if(!m_documentInstanceRoot) {
-			qfError() << "Error creating root object from component:" << m_reportDocumentComponent << m_reportDocumentComponent->url();
+			qfError() << "Error creating root object from component:" << m_reportDocumentComponent << m_reportDocumentComponent->url().toString();
 			qfError() << "Created object:" << o;
 			Q_FOREACH(auto err, m_reportDocumentComponent->errors())
 				qfError() << err.toString();
@@ -397,7 +397,7 @@ void ReportProcessor::print(QPrinter &printer, const QVariantMap &options)
 	if(frm) {
 		Rect r = frm->renderedRect;
 		bool landscape = r.width() > r.height();
-		if(landscape) printer.setOrientation(QPrinter::Landscape);
+		if(landscape) printer.setPageOrientation(QPageLayout::Landscape);
 		//Rect printer_pg_rect = QRectF(printer.pageRect());
 		//qfWarning() << "\tprinter page rect:" << printer_pg_rect.toString();
 		//qfWarning() << "\tresolution:" << printer.resolution() << Size(printer_pg_rect.size()/printer.resolution()).toString(); /// resolution je v DPI

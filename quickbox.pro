@@ -12,22 +12,12 @@ CONFIG += ordered
 #message (config: $$CONFIG)
 
 SUBDIRS += \
+	3rdparty \
 	libqf \
 
-qfsqldbfs {
-	SUBDIRS += \
-		tools \
-
-}
-else:qsqlmon {
-	SUBDIRS += \
-		tools \
-
-}
-else:quickshow-android {
+quickshow-android {
 	SUBDIRS += \
 		quickshow \
-
 }
 else {
 	SUBDIRS += \

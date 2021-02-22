@@ -6,8 +6,8 @@ CONFIG += ordered
 SUBDIRS += \
 	qsqlmon \
 
-qfsqldbfs {
+unix:qfsqldbfs {
 	SUBDIRS += \
-		qfsqldbfs \
+#		qfsqldbfs \
 }
 
