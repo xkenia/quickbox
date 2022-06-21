@@ -35,6 +35,8 @@
 
 #include <algorithm>
 
+#include <plugins/Competitors/src/competitordocument.h>
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
 static const auto SkipEmptyParts = QString::SkipEmptyParts;
 #else
@@ -844,8 +846,49 @@ void RunsWidget::on_btDraw_clicked()
 				if(map_count <= 0)
 					use_all_maps = false;
 
+				QVariant new_runner_id;
+				Competitors::CompetitorDocument newDoc;
+
+				qfs::Query q(transaction.connection());
+				q.prepare("UPDATE runs SET startTimeMs=:startTimeMs WHERE id=:id");
+				qfDebug() << "draw runners count:" << runners_draw_ids.count();
+
 				if(draw_method != DrawMethod::Handicap) {
-					start += vacants_before * interval;
+
+					//puvodni kod
+
+
+					for (int i = 0; i < vacants_before; ++i) {
+
+						//TODO add vacant
+						/*
+						 *	txtimporter 227
+						 */
+
+						newDoc.setEmitDbEventsOnSave(false);
+						newDoc.loadForInsert();
+						newDoc.setValue("classId", class_id);
+						newDoc.setSiid(0);
+						newDoc.setValue("firstName", "VAK");
+						newDoc.setValue("lastName", "VAK");
+						newDoc.setValue("registration", "");
+						newDoc.setValue("licence", "");
+						newDoc.setValue("note", "");
+						new_runner_id = newDoc.saveReturnId();
+						getPlugin<EventPlugin>()->emitReloadDataRequest();
+						getPlugin<EventPlugin>()->emitDbEvent(Event::EventPlugin::DBEVENT_COMPETITOR_COUNTS_CHANGED);
+
+						q.bindValue(QStringLiteral(":startTimeMs"), start);
+						q.bindValue(QStringLiteral(":id"), new_runner_id);
+						q.exec(qf::core::Exception::Throw);
+
+						//puvodni kod
+
+						start += interval;
+						maps_used++;
+
+					}
+
 					if(use_all_maps) {
 						maps_used += vacants_before;
 						int spare_map_count = (map_count - maps_used - vacants_after - runners_draw_ids.count());
@@ -855,9 +898,7 @@ void RunsWidget::on_btDraw_clicked()
 							vacant_every = 0;
 					}
 				}
-				qfs::Query q(transaction.connection());
-				q.prepare("UPDATE runs SET startTimeMs=:startTimeMs WHERE id=:id");
-				qfDebug() << "draw runners count:" << runners_draw_ids.count();
+
 				for (int i = 0; i < runners_draw_ids.count(); ++i) {
 					int runner_id = runners_draw_ids.at(i);
 					q.bindValue(QStringLiteral(":id"), runner_id);
@@ -885,6 +926,33 @@ void RunsWidget::on_btDraw_clicked()
 						if(can_add_vacant && vacant_every > 0 && (((i + 1) % vacant_every) == 0)) {
 							//qfInfo() << i << vacant_every << ((i+1) % vacant_every);
 							qfDebug() << "vakant" << i << (start / 60 / 1000);
+
+							//puvodni kod
+
+							//TODO add vacant
+							/*
+							 *	txtimporter 227
+							 */
+;
+							newDoc.setEmitDbEventsOnSave(false);
+							newDoc.loadForInsert();
+							newDoc.setValue("classId", class_id);
+							newDoc.setSiid(0);
+							newDoc.setValue("firstName", "VAK");
+							newDoc.setValue("lastName", "VAK");
+							newDoc.setValue("registration", "");
+							newDoc.setValue("licence", "");
+							newDoc.setValue("note", "");
+							new_runner_id = newDoc.saveReturnId();
+							getPlugin<EventPlugin>()->emitReloadDataRequest();
+							getPlugin<EventPlugin>()->emitDbEvent(Event::EventPlugin::DBEVENT_COMPETITOR_COUNTS_CHANGED);
+
+							q.bindValue(QStringLiteral(":startTimeMs"), start);
+							q.bindValue(QStringLiteral(":id"), new_runner_id);
+							q.exec(qf::core::Exception::Throw);
+
+							//puvodni kod
+
 							start += interval;
 							maps_used++;
 						}
@@ -893,7 +961,37 @@ void RunsWidget::on_btDraw_clicked()
 				if(use_all_maps)
 					vacants_after = map_count - maps_used;
 				if(vacants_after > 0)
-					start += vacants_after * interval;
+
+					//puvodni kod
+
+					for (int i = 0; i < vacants_after; ++i) {
+
+					//TODO add vacant
+					/*
+					 *	txtimporter 227
+					 */
+					//QVariant runner_id;
+					newDoc.setEmitDbEventsOnSave(false);
+					newDoc.loadForInsert();
+					newDoc.setValue("classId", class_id);
+					newDoc.setSiid(0);
+					newDoc.setValue("firstName", "VAK");
+					newDoc.setValue("lastName", "VAK");
+					newDoc.setValue("registration", "");
+					newDoc.setValue("licence", "");
+					newDoc.setValue("note", "");
+					new_runner_id = newDoc.saveReturnId();
+					getPlugin<EventPlugin>()->emitReloadDataRequest();
+					getPlugin<EventPlugin>()->emitDbEvent(Event::EventPlugin::DBEVENT_COMPETITOR_COUNTS_CHANGED);
+
+					q.bindValue(QStringLiteral(":startTimeMs"), start);
+					q.bindValue(QStringLiteral(":id"), new_runner_id);
+					q.exec(qf::core::Exception::Throw);
+
+					//puvodni kod
+
+					start += interval;
+					}
 				saveLockedForDrawing(class_id, stage_id, true, (start - interval) / 60 / 1000);
 			}
 		}

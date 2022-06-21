@@ -106,6 +106,26 @@ bool DataDocument::save()
 	return ret;
 }
 
+QVariant DataDocument::saveReturnId()
+{
+	qfLogFuncFrame();
+	bool ret = false;
+	QVariant id = dataId();
+	if(mode() != ModeView) {
+		RecordEditMode m = mode();
+
+		emit aboutToSave(id, m);
+		ret = saveData();
+		if(ret) {
+			// reload data id, can be set from serie for mode INSERT
+			id = dataId();
+			qfDebug() << "emitting saved id:" << id.toString() << "mode:" << m;
+			emit saved(id, m);
+		}
+	}
+	return id;
+}
+
 bool DataDocument::drop()
 {
 	qfLogFuncFrame();

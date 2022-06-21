@@ -48,6 +48,7 @@ public:
 	//! this is a convinience function, @see load() .
 	Q_SLOT virtual bool load();
 	Q_SLOT virtual bool save();
+	Q_SLOT virtual QVariant saveReturnId();
 	Q_SLOT virtual bool drop();
 	Q_SLOT virtual bool copy();
 
