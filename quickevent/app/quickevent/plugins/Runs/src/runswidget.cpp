@@ -855,15 +855,10 @@ void RunsWidget::on_btDraw_clicked()
 
 				if(draw_method != DrawMethod::Handicap) {
 
-					//puvodni kod
-
-
+					//TODO dodat prepinac pro zakladani vakantu
 					for (int i = 0; i < vacants_before; ++i) {
 
-						//TODO add vacant
-						/*
-						 *	txtimporter 227
-						 */
+						qfDebug() << "insert VAK into db";
 
 						newDoc.setEmitDbEventsOnSave(false);
 						newDoc.loadForInsert();
@@ -882,7 +877,7 @@ void RunsWidget::on_btDraw_clicked()
 						q.bindValue(QStringLiteral(":id"), new_runner_id);
 						q.exec(qf::core::Exception::Throw);
 
-						//puvodni kod
+						qfDebug() << "VAK inserted into db";
 
 						start += interval;
 						maps_used++;
@@ -927,13 +922,8 @@ void RunsWidget::on_btDraw_clicked()
 							//qfInfo() << i << vacant_every << ((i+1) % vacant_every);
 							qfDebug() << "vakant" << i << (start / 60 / 1000);
 
-							//puvodni kod
-
-							//TODO add vacant
-							/*
-							 *	txtimporter 227
-							 */
-;
+							//TODO dodat prepinac pro zakladani vakantu
+							qfDebug() << "insert VAK into db";
 							newDoc.setEmitDbEventsOnSave(false);
 							newDoc.loadForInsert();
 							newDoc.setValue("classId", class_id);
@@ -950,9 +940,7 @@ void RunsWidget::on_btDraw_clicked()
 							q.bindValue(QStringLiteral(":startTimeMs"), start);
 							q.bindValue(QStringLiteral(":id"), new_runner_id);
 							q.exec(qf::core::Exception::Throw);
-
-							//puvodni kod
-
+							qfDebug() << "VAK inserted into db";
 							start += interval;
 							maps_used++;
 						}
@@ -962,35 +950,30 @@ void RunsWidget::on_btDraw_clicked()
 					vacants_after = map_count - maps_used;
 				if(vacants_after > 0)
 
-					//puvodni kod
+					//TODO dodat prepinac pro zakladani vakantu
+					qfDebug() << "insert VAK into db";
 
 					for (int i = 0; i < vacants_after; ++i) {
+						newDoc.setEmitDbEventsOnSave(false);
+						newDoc.loadForInsert();
+						newDoc.setValue("classId", class_id);
+						newDoc.setSiid(0);
+						newDoc.setValue("firstName", "VAK");
+						newDoc.setValue("lastName", "VAK");
+						newDoc.setValue("registration", "");
+						newDoc.setValue("licence", "");
+						newDoc.setValue("note", "");
+						new_runner_id = newDoc.saveReturnId();
+						getPlugin<EventPlugin>()->emitReloadDataRequest();
+						getPlugin<EventPlugin>()->emitDbEvent(Event::EventPlugin::DBEVENT_COMPETITOR_COUNTS_CHANGED);
 
-					//TODO add vacant
-					/*
-					 *	txtimporter 227
-					 */
-					//QVariant runner_id;
-					newDoc.setEmitDbEventsOnSave(false);
-					newDoc.loadForInsert();
-					newDoc.setValue("classId", class_id);
-					newDoc.setSiid(0);
-					newDoc.setValue("firstName", "VAK");
-					newDoc.setValue("lastName", "VAK");
-					newDoc.setValue("registration", "");
-					newDoc.setValue("licence", "");
-					newDoc.setValue("note", "");
-					new_runner_id = newDoc.saveReturnId();
-					getPlugin<EventPlugin>()->emitReloadDataRequest();
-					getPlugin<EventPlugin>()->emitDbEvent(Event::EventPlugin::DBEVENT_COMPETITOR_COUNTS_CHANGED);
+						q.bindValue(QStringLiteral(":startTimeMs"), start);
+						q.bindValue(QStringLiteral(":id"), new_runner_id);
+						q.exec(qf::core::Exception::Throw);
 
-					q.bindValue(QStringLiteral(":startTimeMs"), start);
-					q.bindValue(QStringLiteral(":id"), new_runner_id);
-					q.exec(qf::core::Exception::Throw);
+						qfDebug() << "VAK inserted into db";
 
-					//puvodni kod
-
-					start += interval;
+						start += interval;
 					}
 				saveLockedForDrawing(class_id, stage_id, true, (start - interval) / 60 / 1000);
 			}
